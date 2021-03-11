@@ -64,6 +64,12 @@ resource "aws_elastic_beanstalk_environment" "fetch" {
     name      = "IamInstanceProfile"
     value     = "aws-elasticbeanstalk-ec2-role"
   }
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
+    # value     = "default,awseb-e-mgcy9ixhpy-stack-AWSEBSecurityGroup-DARM0H0KODMZ"
+    value = "default"
+  }
 
   # health
   # setting {

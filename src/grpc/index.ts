@@ -142,6 +142,8 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 		console.log(`=> [lnd] connected! ${now}`)
 		if (callback) callback()
 	} catch (e) {
+		console.log(e);
+
 		if (e.code === ERR_CODE_UNIMPLEMENTED) {
 			await tryToUnlockLND()
 		}

@@ -21,3 +21,5 @@ To connect to your app
 `npm run prod`
 
 When Relay starts up, it will print a QR in the terminal. You can scan this in your app (Android & iOS) to connect!
+
+aws s3 sync ~/Desktop/N2N2/n2n2-relay/voltage s3://n2n2-keys --exclude ".DS_Store"
