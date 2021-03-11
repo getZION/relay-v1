@@ -12,7 +12,7 @@ resource "aws_elastic_beanstalk_environment" "fetch" {
   application  = aws_elastic_beanstalk_application.fetch.name
   tier         = "WebServer"
   # solution_stack_name = "64bit Amazon Linux 2 v3.2.5 running Docker"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v4.17.1 running Node.js"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v4.17.3 running Node.js"
 
   # vpc
   setting {
