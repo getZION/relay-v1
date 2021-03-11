@@ -29,3 +29,9 @@ public/uploads/*
 sqlite/sphinx.db
 sqlite/sphinxpg.sql
 sqlite/sphinxlite.sql
+
+.lnd/
+
+voltage/
+
+_/

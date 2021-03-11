@@ -15,6 +15,7 @@ RUN npm install
 RUN cp /relay/config/app.json /relay/dist/config/app.json
 RUN cp /relay/config/config.json /relay/dist/config/config.json
 
+
 RUN chown -R 1000:1000 /relay
 
 FROM node:12-buster-slim
@@ -28,6 +29,7 @@ COPY --from=builder /relay .
 EXPOSE 3300
 
 ENV NODE_ENV production
+# ENV NODE_ENV development
 ENV NODE_SCHEME http
 ENV PORT 3300
 
