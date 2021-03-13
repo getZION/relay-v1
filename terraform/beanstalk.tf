@@ -7,12 +7,12 @@ resource "aws_elastic_beanstalk_application" "fetch" {
 resource "aws_elastic_beanstalk_environment" "fetch" {
   count = length(local.env)
 
-  name                = format("%s-%s-%s", local.env[count.index], local.org, local.name)
-  cname_prefix        = format("%s-%s-%s", local.env[count.index], local.org, local.name)
-  application         = aws_elastic_beanstalk_application.fetch.name
-  tier                = "WebServer"
-  solution_stack_name = "64bit Amazon Linux 2 v3.2.5 running Docker"
-  # solution_stack_name = "64bit Amazon Linux 2018.03 v4.17.3 running Node.js"
+  name         = format("%s-%s-%s", local.env[count.index], local.org, local.name)
+  cname_prefix = format("%s-%s-%s", local.env[count.index], local.org, local.name)
+  application  = aws_elastic_beanstalk_application.fetch.name
+  tier         = "WebServer"
+  # solution_stack_name = "64bit Amazon Linux 2 v3.2.5 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v4.17.3 running Node.js"
 
   # vpc
   setting {
