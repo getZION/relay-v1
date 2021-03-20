@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 volumes:
   node_modules:
 
@@ -21,3 +21,4 @@ services:
       - NODE_IP=mynodeip
       - NODE_ALIAS=myalias
       - NODE_ENV=production
+      # - NODE_DOMAIN=0.0.0.0

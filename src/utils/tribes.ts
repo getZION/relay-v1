@@ -6,7 +6,7 @@ import * as mqtt from 'mqtt'
 import fetch from 'node-fetch'
 import { models } from '../models'
 import { makeBotsJSON, declare_bot } from './tribeBots'
-import {loadConfig} from './config'
+import { loadConfig } from './config'
 
 export { declare_bot }
 
@@ -27,6 +27,9 @@ export async function connect(onMessage) {
         password: pwd,
         reconnectPeriod: 0, // dont auto reconnect
       })
+
+      console.log("A => ", info, pwd);
+
       client.on('connect', async function () {
         console.log("[tribes] connected!")
         client.subscribe(`${info.identity_pubkey}/#`)
