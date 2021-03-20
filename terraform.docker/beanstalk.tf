@@ -71,6 +71,18 @@ resource "aws_elastic_beanstalk_environment" "fetch" {
     value = "default"
   }
 
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "RootVolumeSize"
+    value     = "64"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "RootVolumeType"
+    value     = "gp2"
+  }
+
   # health
   # setting {
   #   namespace = "aws:elasticbeanstalk:application"

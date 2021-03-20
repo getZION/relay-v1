@@ -8,8 +8,8 @@ services:
       context: .
       dockerfile: Dockerfile.lndrelay
     volumes:
-      - .:/relay
-      - .lnd/:/relay/.lnd
+      # - .:/relay
+      # - .lnd/:/relay/.lnd
       - node_modules:/relay/node_modules
     ports:
       - "3000:3000"

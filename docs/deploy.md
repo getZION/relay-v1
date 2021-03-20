@@ -31,6 +31,8 @@ sudo -s
 docker ps -q | xargs -L 1 docker logs -f
 
 docker exec -it “container-id” /bin/sh
+docker exec -it $(docker ps --latest --quiet) bash
+
 cat /var/log/supervisor/lnd.log
-cat /var/log/supervisor/relay.log
+cat /var/log/supervisor/
 ```
