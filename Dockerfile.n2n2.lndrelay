@@ -58,8 +58,6 @@ RUN npm -g config set user root
 RUN npm install nw-gyp -g
 RUN npm uninstall sqlite3
 RUN npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.42.0
-RUN npm uninstall sqlite3
-RUN npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.42.0
 RUN npm rebuild
 RUN npm run tsc
 
