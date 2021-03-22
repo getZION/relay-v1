@@ -14,6 +14,7 @@ if {$force_conservative} {
 }
 
 set timeout -1
+echo "Creating wallet..."
 spawn lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon create
 
 # lncli --network=testnet --rpcserver=localhost:10001 --lnddir=/relay/.lnd/ --macaroonpath=data/admin.macaroon create

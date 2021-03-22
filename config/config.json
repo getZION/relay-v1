@@ -13,6 +13,6 @@
   },
   "production": {
     "dialect": "sqlite",
-    "storage": "/relay/voltage/sphinx.db"
+    "storage": "/relay/sphinx.db"
   }
 }

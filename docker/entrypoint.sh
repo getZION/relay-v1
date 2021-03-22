@@ -33,7 +33,7 @@ sleep 5
 if [[ -f "/relay/.lnd/.lndpwd" ]]; then
   echo "Wallet file found..."
 else
-  echo "Creating wallet..."
+  echo "Preparing wallet..."
   WALLET_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c20)
   WALLET_PASSPHRASE=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c20)
 
