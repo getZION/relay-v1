@@ -12,3 +12,4 @@ numgraphsyncpeers=1
 routing.assumechanvalid=1
 autopilot.active=false
 
+adminmacaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon
