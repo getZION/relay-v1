@@ -49,6 +49,16 @@ else
   sleep 5
 fi
 
+WALLET_PASSWORD=$(cat /relay/.lnd/.lndpwd)
+
+spawn lncli unlock
+expect {
+	"Input wallet password:" {
+		send -- "$WALLET_PASSWORD\n"
+	}
+}
+expect eof 
+
 echo "Starting relay..."
 supervisorctl start relay
 
