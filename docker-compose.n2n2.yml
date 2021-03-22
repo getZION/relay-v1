@@ -4,10 +4,7 @@ volumes:
 
 services:
   relay:
-    build:
-      context: .
-      # dockerfile: Dockerfile.lndrelay
-      dockerfile: Dockerfile.n2n2.lndrelay
+    image: relay:staging
     volumes:
       # - .:/relay
       # - .lnd/:/relay/.lnd
@@ -18,11 +15,11 @@ services:
       - "10009:10009"
     command: "lnd --accept-keysend --configfile=/relay/.lnd/lnd.conf && npm start"
     environment:
-      - NODE_ENV=production
       - PORT=3000
       - NODE_DOMAIN=n2n2-relay-1.n2n2.chat
-      - NODE_IP=$NODE_IP
-      - NODE_ALIAS=$NODE_ALIAS
+      - NODE_ENV=production
+      # - NODE_IP=$NODE_IP
+      # - NODE_ALIAS=$NODE_ALIAS
 
       # - NODE_IP=mynodeip
       # - NODE_ALIAS=myalias

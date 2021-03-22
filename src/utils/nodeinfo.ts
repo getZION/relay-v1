@@ -142,38 +142,38 @@ interface Policy {
   fee_base_msat: number
   disabled: boolean
 }
-const policies = ['node1_policy','node2_policy']
-async function listNonZeroPolicies(){
+const policies = ['node1_policy', 'node2_policy']
+async function listNonZeroPolicies() {
   const ret: Policy[] = []
 
   const chans = await LND.listChannels({})
-  if(!(chans && chans.channels)) return ret
-  
-  await asyncForEach(chans.channels, async chan=>{
+  if (!(chans && chans.channels)) return ret
+
+  await asyncForEach(chans.channels, async chan => {
     try {
       const info = await LND.getChanInfo(chan.chan_id)
-      if(!info) return
-      policies.forEach(p=>{
-        if(info[p]) {
+      if (!info) return
+      policies.forEach(p => {
+        if (info[p]) {
           const fee_base_msat = parseInt(info[p].fee_base_msat)
           const disabled = info[p].disabled
-          if(fee_base_msat>0 || disabled) {
+          if (fee_base_msat > 0 || disabled) {
             ret.push({
-              node:p, 
-              fee_base_msat, 
-              chan_id:chan.chan_id, 
+              node: p,
+              fee_base_msat,
+              chan_id: chan.chan_id,
               disabled
             })
           }
         }
       })
-    } catch(e){}
+    } catch (e) { }
   })
   return ret
 }
 
 async function asyncForEach(array, callback) {
-	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index, array);
-	}
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
 }

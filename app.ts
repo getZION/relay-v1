@@ -74,6 +74,7 @@ function setupApp() {
 		}
 		app.use('/static', express.static('public'));
 		app.get('/app', (req, res) => res.send('INDEX'))
+		app.get('/', (req, res) => res.send('ok'))
 		if (config.connect_ui) {
 			app.get('/connect', connect.connect)
 		}

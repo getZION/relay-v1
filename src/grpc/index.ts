@@ -11,7 +11,7 @@ import { tryToUnlockLND } from '../utils/unlock'
 
 const ERR_CODE_UNAVAILABLE = 14
 const ERR_CODE_STREAM_REMOVED = 2
-const ERR_CODE_UNIMPLEMENTED = 12 // locked
+// const ERR_CODE_UNIMPLEMENTED = 12 // locked
 
 export function subscribeInvoices(parseKeysendInvoice) {
 	return new Promise(async (resolve, reject) => {
@@ -136,15 +136,23 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 	i++
 	const now = moment().format('YYYY-MM-DD HH:mm:ss').trim();
 	console.log(`=> ${now} [lnd] reconnecting... attempt #${i}`)
+
 	try {
 		await network.initGrpcSubscriptions()
 		const now = moment().format('YYYY-MM-DD HH:mm:ss').trim();
 		console.log(`=> [lnd] connected! ${now}`)
 		if (callback) callback()
 	} catch (e) {
-		if (e.code === ERR_CODE_UNIMPLEMENTED) {
+		console.log(e);
+
+		// if (e.code === ERR_CODE_UNIMPLEMENTED) {
+		// 	await tryToUnlockLND()
+		// }
+
+		if (e.details === 'wallet locked, unlock it to enable full RPC access') {
 			await tryToUnlockLND()
 		}
+
 		setTimeout(async () => { // retry each 2 secs
 			if (ctx === innerCtx) { // if another retry fires, then this will not run
 				await reconnectToLND(innerCtx, callback)

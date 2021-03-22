@@ -1,5 +1,5 @@
 FROM golang:1.13-alpine as builder
-LABEL maintainer="gonzaloaune@stakwork.com"
+LABEL maintainer="stan@n2n2.co"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -8,8 +8,8 @@ ENV GODEBUG netdns=cgo
 # Pass a tag, branch or a commit using build-arg.  This allows a docker
 # image to be built from a specified Git state.  The default image
 # will use the Git tip of master by default.
-ARG checkout="v0.11.1-beta"
-# ARG checkout="master"
+# ARG checkout="v0.11.1-beta"
+ARG checkout="master"
 
 # Install dependencies and build the binaries.
 RUN apk add --no-cache --update alpine-sdk git make gcc openssh-client
@@ -39,13 +39,13 @@ COPY --from=builder /go/bin/lnd /bin/
 # RUN apk add --no-cache --update nodejs=12.15.0-r1 nodejs-npm=12.15.0-r1 sqlite=3.30.1-r2 git supervisor
 RUN apk add --no-cache --update nodejs=12.21.0-r0 nodejs-npm=12.21.0-r0 sqlite=3.30.1-r2 git supervisor
 
-RUN git clone https://github.com/stakwork/sphinx-relay /relay/
+RUN git clone https://github.com/n2n2dev/n2n2-relay /relay/
 
 WORKDIR /relay/
 
-ARG sphinx_checkout="master"
+ARG n2n2_checkout="staging"
 
-RUN git checkout $sphinx_checkout
+RUN git checkout $n2n2_checkout
 
 RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python jq git curl libmcrypt-dev
 
@@ -56,8 +56,6 @@ RUN npm install
 RUN npm install --quiet node-gyp@3.8.0 -g
 RUN npm -g config set user root
 RUN npm install nw-gyp -g
-RUN npm uninstall sqlite3
-RUN npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.42.0
 RUN npm uninstall sqlite3
 RUN npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.42.0
 RUN npm rebuild
@@ -87,6 +85,8 @@ COPY ./docker/supervisord.conf /etc/supervisord.conf
 COPY ./docker/lnd_supervisor.conf /etc/supervisor.d/lnd_supervisor.ini
 COPY ./docker/relay_supervisor.conf /etc/supervisor.d/relay_supervisor.ini
 COPY ./docker/aliases.sh /etc/profile.d/aliases.sh
+
+CMD touch ./sphinx.db
 
 ENV ENV="/etc/profile"
 

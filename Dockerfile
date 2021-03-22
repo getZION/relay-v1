@@ -28,6 +28,7 @@ COPY --from=builder /relay .
 EXPOSE 3300
 
 ENV NODE_ENV production
+# ENV NODE_ENV development
 ENV NODE_SCHEME http
 ENV PORT 3300
 

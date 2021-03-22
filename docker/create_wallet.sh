@@ -15,6 +15,9 @@ if {$force_conservative} {
 
 set timeout -1
 spawn lncli --lnddir=/relay/.lnd/ create
+
+# lncli --network=testnet --rpcserver=localhost:10001 --lnddir=/relay/.lnd/ --macaroonpath=data/admin.macaroon create
+
 match_max 100000
 expect -exact "Input wallet password: "
 send -- "$WALLET_PASSWORD\r"
@@ -34,3 +37,11 @@ expect -exact "\r
 Confirm password: "
 send -- "$WALLET_PASSPHRASE\r"
 expect eof
+
+# sleep 3
+# # WALLET_PASSWORD=$(cat /relay/.lnd/.lndpwd)
+
+# spawn lncli --lnddir=/relay/.lnd/ unlock
+# expect -exact "Input wallet password: "
+# send -- "$WALLET_PASSWORD\r"
+# expect eof 

@@ -29,3 +29,12 @@ public/uploads/*
 sqlite/sphinx.db
 sqlite/sphinxpg.sql
 sqlite/sphinxlite.sql
+
+voltage/
+
+_/
+
+.env
+.lnd/
+
+ops.ansible
