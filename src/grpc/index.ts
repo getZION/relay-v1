@@ -11,7 +11,7 @@ import { tryToUnlockLND } from '../utils/unlock'
 
 const ERR_CODE_UNAVAILABLE = 14
 const ERR_CODE_STREAM_REMOVED = 2
-const ERR_CODE_UNIMPLEMENTED = 12 // locked
+// const ERR_CODE_UNIMPLEMENTED = 12 // locked
 
 export function subscribeInvoices(parseKeysendInvoice) {
 	return new Promise(async (resolve, reject) => {
