@@ -1,14 +1,25 @@
 # Deploying n2n2-relay
 
-## Docker
-### docker compose
-```
-docker-compose build
-```
-
 ## Stack DevOps/CI
-Stack is currently deployed via terraform.
+Stack is currently deployed to AWS via ansible.
 
+```
+# run ansible 
+# ssh into instance
+ssh -i ~/.ssh/n2n2 ec2-user@ec2-18-205-113-254.compute-1.amazonaws.com
+
+sudo -s
+cd /relay
+docker-compose up
+docker exec -it $(docker ps --latest --quiet) bash
+
+docker kill $(docker ps -q)
+
+tail -f /var/log/supervisor/lnd.log
+tail -f /var/log/supervisor/relay.log
+```
+
+## Deprecated Flows
 
 ### Terrafom Node
 ```
@@ -25,16 +36,15 @@ terraform apply
 terraform show
 terraform destruct
 
-ssh -i ~/.ssh/n2n2 ec2-user@ec2-18-205-113-254.compute-1.amazonaws.com
-
 sudo -s
 docker ps -q | xargs -L 1 docker logs -f
 
 docker exec -it “container-id” /bin/sh
 docker exec -it $(docker ps --latest --quiet) bash
+docker kill $(docker ps -q)
 
-cat /var/log/supervisor/lnd.log
-cat /var/log/supervisor/
+tail -f /var/log/supervisor/lnd.log
+tail -f /var/log/supervisor/relay.log
 ```
 
 ```
@@ -43,7 +53,14 @@ docker-compose up
 ```
 
 ```
+touch /voltage/sphinx.db
+
 docker build -t relay .
 docker tag relay:latest relay:staging
+docker run relay:latest
+
 docker-compose -f docker-compose.n2n2.yml up
+docker-compose -f docker-compose.n2n2.yml up -dd
 ```
+
+command=sh -c 'lnd --lnddir=/relay/.lnd/ --alias=$HOSTNAME --tlsextradomain=$NODE_DOMAIN --externalip=$NODE_DOMAIN'

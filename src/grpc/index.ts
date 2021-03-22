@@ -145,11 +145,11 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 	} catch (e) {
 		console.log(e);
 
-		if (e.code === ERR_CODE_UNIMPLEMENTED) {
-			await tryToUnlockLND()
-		}
+		// if (e.code === ERR_CODE_UNIMPLEMENTED) {
+		// 	await tryToUnlockLND()
+		// }
 
-		if (e.code === ERR_CODE_STREAM_REMOVED && e.details === 'wallet locked, unlock it to enable full RPC access') {
+		if (e.details === 'wallet locked, unlock it to enable full RPC access') {
 			await tryToUnlockLND()
 		}
 

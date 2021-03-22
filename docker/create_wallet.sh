@@ -38,10 +38,10 @@ Confirm password: "
 send -- "$WALLET_PASSPHRASE\r"
 expect eof
 
-sleep 3
-# WALLET_PASSWORD=$(cat /relay/.lnd/.lndpwd)
+# sleep 3
+# # WALLET_PASSWORD=$(cat /relay/.lnd/.lndpwd)
 
-spawn lncli --lnddir=/relay/.lnd/ unlock
-expect -exact "Input wallet password: "
-send -- "$WALLET_PASSWORD\r"
-expect eof 
+# spawn lncli --lnddir=/relay/.lnd/ unlock
+# expect -exact "Input wallet password: "
+# send -- "$WALLET_PASSWORD\r"
+# expect eof 
