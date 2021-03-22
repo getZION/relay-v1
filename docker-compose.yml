@@ -18,9 +18,9 @@ services:
       - "10009:10009"
     command: "lnd --accept-keysend --configfile=/relay/.lnd/lnd.conf && npm start"
     environment:
-      - PORT=3000
-      - NODE_DOMAIN=$NODE_DOMAIN
       - NODE_ENV=production
+      - PORT=3000
+      - NODE_DOMAIN=n2n2-relay-1.n2n2.chat
       - NODE_IP=$NODE_IP
       - NODE_ALIAS=$NODE_ALIAS
 
