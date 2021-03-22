@@ -1,0 +1,56 @@
+---
+- name: Upgrade system
+  apt: upgrade=dist update_cache=yes
+  become: yes
+  tags: provisioning
+  
+- name: Install nginx
+  apt:
+    pkg: nginx
+    state: installed
+    update_cache: yes
+  become: yes
+  tags: provisioning
+
+- name: Deactivate the default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: yes
+  tags: provisioning
+
+- name: Install software-properties-common
+  apt:
+    pkg: software-properties-common
+    state: installed
+    update_cache: yes
+  become: yes
+
+- name: Add certbot repository
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+    state: present
+  become: yes
+  tags: provisioning
+
+- name: Install python-certbot-nginx
+  apt:
+    pkg: python-certbot-nginx
+    state: installed
+    update_cache: yes
+  become: yes
+  tags: provisioning
+
+- name: Set up DH params
+  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  args:
+    creates: /etc/ssl/certs/dhparam.pem
+  become: yes
+  tags: provisioning
+
+- name: Copy acme
+  copy:
+    src: files/acme
+    dest: /etc/nginx/acme
+  become: true
+  tags: provisioning

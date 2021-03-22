@@ -1,0 +1,12 @@
+{
+    "apps" : [{
+      "name": "game-server",
+      "script": "node_modules/.bin/ts-node",
+      "args": "--files index.ts",
+      "env": {
+        "PORT": 8080,
+        "NODE_ENV": "production",
+        "NODE_HOST": "0.0.0.0"
+      }
+    }]
+  }

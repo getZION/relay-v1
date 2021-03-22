@@ -1,0 +1,9 @@
+# templates/ssh_config.j2
+
+{{ ansible_managed | comment }}
+
+Host github.com
+IdentityFile /root/.ssh/id_rsa.github
+IdentitiesOnly yes
+StrictHostKeyChecking no
+UserKnownHostsFile=/dev/null

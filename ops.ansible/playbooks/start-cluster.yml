@@ -1,0 +1,51 @@
+---
+# Basic provisioning example
+- name: Create AWS resources
+  # hosts: localhost
+  # connection: local
+  # gather_facts: False
+  #
+  # vars_files:
+  #   - cluster_configs.yml
+  #
+  # tasks:
+  # - name: Debug
+  #   debug:
+  #     msg: "{{item.instance_type}}"
+  #   with_items: "{{cluster_configs}}"
+  #
+  # - include_tasks: start-node.yml config={{item}}
+  #   with_items: "{{cluster_configs}}"
+
+  hosts: localhost
+  connection: local
+  gather_facts: False
+
+  vars_files:
+    - cluster_configs.yml
+
+  tasks:
+    - name: Debug
+      debug:
+        msg: "{{item.instance_name}} => {{item.instance_type}}"
+      with_items: "{{cluster_configs}}"
+
+    - include_tasks: start-node.yml
+      vars:
+        config: "{{item}}"
+
+      with_items: "{{cluster_configs}}"
+
+- hosts: n2n2-node
+  gather_facts: yes
+
+  # vars:
+  #   # domain_name: "master.playentertainment.online"
+
+  roles:
+    - n2n2
+
+  # environment:
+  #   NODE_ENV: production
+  #   NODE_HOST: 0.0.0.0
+  #   PORT: 8080
