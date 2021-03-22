@@ -36,3 +36,14 @@ docker exec -it $(docker ps --latest --quiet) bash
 cat /var/log/supervisor/lnd.log
 cat /var/log/supervisor/
 ```
+
+```
+docker build -t relay -f Dockerfile.n2n2.lndrelay .
+docker-compose up
+```
+
+```
+docker build -t relay .
+docker tag relay:latest relay:staging
+docker-compose -f docker-compose.n2n2.yml up
+```

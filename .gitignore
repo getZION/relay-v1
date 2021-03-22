@@ -30,8 +30,11 @@ sqlite/sphinx.db
 sqlite/sphinxpg.sql
 sqlite/sphinxlite.sql
 
-.lnd/
-
 voltage/
 
 _/
+
+.env
+.lnd/
+
+ops.ansible
