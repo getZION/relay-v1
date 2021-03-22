@@ -1,4 +1,4 @@
-# n2n2-relays
+# Invite/Backup Restore Code
 
 Restore code:
 ```

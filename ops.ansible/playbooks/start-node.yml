@@ -1,0 +1,74 @@
+# ---
+# - name: Debug
+#   debug:
+#     msg: "{{config.instance_name}}"
+#
+---
+- name: Create a security group
+  ec2_group:
+    name: ansible
+    description: "Ansible Security Group"
+    vpc_id: "{{vpc_id}}"
+    region: "{{aws_region}}"
+    aws_access_key: "{{aws_access_key}}"
+    aws_secret_key: "{{aws_secret_key}}"
+    rules:
+      - proto: all
+        cidr_ip: "{{my_local_cidr_ip}}"
+      - proto: all
+        group_name: ansible
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  register: firewall
+
+- name: Create an EC2 instance
+  ec2:
+    aws_access_key: "{{aws_access_key}}"
+    aws_secret_key: "{{aws_secret_key}}"
+    key_name: "{{key_name}}"
+    region: "{{aws_region}}"
+    group_id: "{{firewall.group_id}}"
+    instance_type: "{{config.instance_type}}"
+    image: "{{ami_id}}"
+    wait: yes
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: 32
+        delete_on_termination: true
+    exact_count: 1
+    count_tag:
+      Name: "{{config.instance_name}}"
+    instance_tags:
+      Name: "{{config.instance_name}}"
+  register: ec2
+- debug: var=ec2
+
+- name: Allocating elastic IP to instance
+  ec2_eip:
+    aws_access_key: "{{aws_access_key}}"
+    aws_secret_key: "{{aws_secret_key}}"
+    in_vpc: yes
+    reuse_existing_ip_allowed: yes
+    state: present
+    region: "{{aws_region}}"
+    device_id: "{{ ec2.instance_ids[0] }}"
+    private_ip_address: "{{ ec2.instances[0].private_ip }}"
+  register: instance_eip
+- debug: var=instance_eip.public_ip
+
+- name: add a host alias that we reach through a tunnel (Ansible >= 2.0)
+  add_host:
+    name: "n2n2-node"
+    hostname: "n2n2"
+    groups: dynamically_created_hosts
+    ansible_host: "{{ instance_eip.public_ip }}"
+    ansible_connection: "ssh"
+    ansible_user: "ubuntu"
+    ansible_ssh_private_key_file: "~/.ssh/n2n2"
+    ansible_python_interpreter: "/usr/bin/python3"
+
+- name: Add the machine to the inventory
+  pause:
+    minutes: 1

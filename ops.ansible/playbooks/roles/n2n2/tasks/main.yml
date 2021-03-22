@@ -1,0 +1,166 @@
+---
+- name: Mkdir n2n2 client path dir
+  file:
+    path: "{{ n2n2_path }}"
+    state: directory
+    owner: ubuntu
+  become: true
+  tags: provisioning
+
+# - name: Install dependencies
+#   apt:
+#     name: ["unzip", "libpng-dev"]
+#   become: true
+
+- name: add github ssh key
+  copy: >
+    src=~/.ssh/id_rsa.github
+    dest=/root/.ssh/id_rsa.github
+    owner=root
+    group=root
+    mode=0600
+  become: yes
+
+- name: add github ssh key
+  copy: >
+    src=~/.ssh/id_rsa.github.pub
+    dest=/root/.ssh/id_rsa.github.pub
+    owner=root
+    group=root
+    mode=0600
+  become: yes
+
+- name: configure ssh to use ansible key for github.com
+  template: >
+    src=templates/ssh_config.j2
+    dest=/root/.ssh/config
+    owner=root
+    group=root
+    mode=0644
+  become: yes
+
+- name: Add and load private key to ssh-agent
+  shell: "eval `ssh-agent -s` && ssh-add /root/.ssh/id_rsa.github"
+  become: yes
+
+- name: Set authorized key took from file
+  authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.github.pub') }}"
+  become: yes
+
+- name: clone a private repository
+  git: >
+    repo=git@github.com:n2n2dev/n2n2-relay.git
+    key_file=/root/.ssh/id_rsa.github
+    dest={{ n2n2_path }}
+    version={{ git_branch }}
+    force=yes
+    update=yes
+  become: yes
+
+- name: Fix permissions
+  file:
+    path: /srv
+    owner: ubuntu
+    group: ubuntu
+    mode: 0755
+    state: directory
+    recurse: yes
+  become: yes
+#
+# - name: Configure the Yarn APT key
+#   apt_key: url=https://dl.yarnpkg.com/debian/pubkey.gpg
+#   become: yes
+#   tags: provisioning
+
+# - name: Add Yarn repository
+#   apt_repository:
+#     repo: 'deb https://dl.yarnpkg.com/debian/ stable main'
+#     state: present
+#     update_cache: yes
+#   become: yes
+#   tags: provisioning
+
+# - name: Install Yarn
+#   apt:
+#     pkg: yarn
+#     state: present
+#   become: yes
+#   tags: provisioning
+
+# - name: Install PM2
+#   shell: npm install pm2 -g
+#   become: true
+#   tags: provisioning
+
+# - name: Setup PM2 systemd service
+#   shell: env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+#   become: true
+#   tags: provisioning
+# #
+
+# - name: Start PM2 systemd service
+#   systemd:
+#     daemon_reload: yes
+#     enabled: yes
+#     state: started
+#     name: pm2-ubuntu
+#   become: yes
+#   tags: provisioning
+
+# - name: npm install
+#   command: npm install
+#   args:
+#     chdir: "{{ n2n2_path }}"
+#   tags: deployment
+
+# - name: npm build
+#   command: npm run build
+#   args:
+#     chdir: "{{ n2n2_path }}"
+#   tags: deployment
+
+# - name: Copy pm2.json
+#   copy:
+#     src: templates/pm2.json.j2
+#     dest: "{{ n2n2_path }}/pm2.json"
+#   tags: deployment
+
+# # - name: Set NODE_ENV
+# #   shell: export NODE_ENV=production
+# #
+# # - name: Set NODE_HOST
+# #   shell: export NODE_HOST=0.0.0.0
+# #
+# # - name: Set PORT
+# #   shell: export PORT=8080
+
+# - name: Start moc via PM2
+#   command: pm2 start pm2.json
+#   args:
+#     chdir: "{{ n2n2_path }}"
+#   tags: deployment
+
+# - name: Copy the site config
+#   template:
+#     src: templates/site.conf.j2
+#     dest: "/etc/nginx/sites-available/{{ domain_name }}.conf"
+#   become: yes
+#   tags: deployment
+
+# - name: Activate the site
+#   file:
+#     src: "/etc/nginx/sites-available/{{ domain_name }}.conf"
+#     dest: "/etc/nginx/sites-enabled/{{ domain_name }}.conf"
+#     state: link
+#   become: yes
+#   tags: deployment
+
+# - name: Reload nginx
+#   service:
+#     name: nginx
+#     state: reloaded
+#   become: yes
+#   tags: deployment
