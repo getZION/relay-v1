@@ -136,6 +136,7 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 	i++
 	const now = moment().format('YYYY-MM-DD HH:mm:ss').trim();
 	console.log(`=> ${now} [lnd] reconnecting... attempt #${i}`)
+
 	try {
 		await network.initGrpcSubscriptions()
 		const now = moment().format('YYYY-MM-DD HH:mm:ss').trim();
@@ -147,6 +148,7 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 		if (e.code === ERR_CODE_UNIMPLEMENTED) {
 			await tryToUnlockLND()
 		}
+
 		setTimeout(async () => { // retry each 2 secs
 			if (ctx === innerCtx) { // if another retry fires, then this will not run
 				await reconnectToLND(innerCtx, callback)

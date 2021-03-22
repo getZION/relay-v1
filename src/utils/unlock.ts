@@ -1,5 +1,5 @@
 import { unlockWallet } from './lightning'
-import {loadConfig} from './config'
+import { loadConfig } from './config'
 const fs = require('fs')
 const readline = require('readline');
 
@@ -10,6 +10,8 @@ const config = loadConfig()
 */
 
 export async function tryToUnlockLND() {
+    console.log("tryToUnlockLND");
+
     const p = config.lnd_pwd_path
     if (!p) return
 
