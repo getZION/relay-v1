@@ -149,6 +149,10 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 			await tryToUnlockLND()
 		}
 
+		if (e.code === ERR_CODE_STREAM_REMOVED && e.details === 'wallet locked, unlock it to enable full RPC access') {
+			await tryToUnlockLND()
+		}
+
 		setTimeout(async () => { // retry each 2 secs
 			if (ctx === innerCtx) { // if another retry fires, then this will not run
 				await reconnectToLND(innerCtx, callback)
