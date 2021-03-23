@@ -22,6 +22,16 @@
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
 
+# - name: Delete from Route 53
+#   community.aws.route53:
+#     state: absent
+#     zone: n2n2.chat
+#     record: "{{ config.instance_name }}.n2n2.chat"
+#     type: A
+#     ttl: 300
+#     value: "{{ ec2.instances[0].instance_id }}"
+#     wait: yes
+
 - name: Remove host from known_hosts
   known_hosts:
     path: ~/.ssh/known_hosts

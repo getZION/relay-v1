@@ -1,10 +1,17 @@
 ---
+# - name: Print ec2 information
+#   debug: var=hostvars['n2n2-node'].ec2
+
 - name: Print ec2 information
-  debug: var=hostvars['n2n2-node'].ec2
+  debug: var=ansible_hostname
 
 # - name: Print all available facts
 #   ansible.builtin.debug:
-#     var: ansible_facts
+#     var: hostvars
+
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: hostvars
 
 - name: Set NODE_DOMAIN
   lineinfile:
@@ -12,7 +19,7 @@
     create: yes
     state: present
     regexp: "^NODE_DOMAIN"
-    line: "NODE_DOMAIN={{ hostvars['n2n2-node'].ec2.tagged_instances[0].tags['Name'] }}.n2n2.chat"
+    line: "NODE_DOMAIN={{ ansible_hostname }}"
   become: yes
 
 - name: Mkdir n2n2 client path dir
@@ -71,12 +78,15 @@
     update=yes
   become: yes
 
-- name: Fix permissions
-  file:
-    path: /srv
-    owner: ubuntu
-    group: ubuntu
-    mode: 0755
-    state: directory
-    recurse: yes
+- name: Start container
+  shell: "cd /relay && docker-compose up -d"
   become: yes
+# - name: Fix permissions
+#   file:
+#     path: /srv
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: 0755
+#     state: directory
+#     recurse: yes
+#   become: yes

@@ -19,7 +19,7 @@
 
       with_items: "{{cluster_configs}}"
 
-- hosts: n2n2-node
+- hosts: relays
   gather_facts: yes
 
   # vars:
