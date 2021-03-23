@@ -5,3 +5,9 @@ To start see [Deploy](docs/deploy.md)
 
 ## Invite/Backup Code
 To start see [Code](docs/code.md)
+
+## Relay commands
+
+```
+cat /relay/connection_string.txt 
+```

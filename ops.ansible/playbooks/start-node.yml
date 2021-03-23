@@ -76,7 +76,8 @@
     ansible_user: "ubuntu"
     ansible_ssh_private_key_file: "~/.ssh/n2n2"
     ansible_python_interpreter: "/usr/bin/python3"
-    ec2: "{{ec2}}"
+    ec2: "{{ ec2 }}"
+    public_ip: "{{ instance_eip.public_ip }}"
 
 - name: Add to Route 53
   community.aws.route53:

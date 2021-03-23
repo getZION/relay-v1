@@ -1,6 +1,5 @@
 # N2N2 Relay Cluster
 
-
 ## Prerequisites
 ```
 brew install ansible
@@ -11,7 +10,6 @@ pip install boto boto3 botocore
 ```
 code ops.ansible/playbooks/group_vars/all.yml 
 ```
-
 
 ## Instructions
 ### Ansible
@@ -28,6 +26,7 @@ ssh -i ~/.ssh/n2n2 ubuntu@n2n2-relay-1.n2n2.chat
 sudo -s
 cd /relay
 docker-compose up
+docker exec -it $(docker ps --latest --quiet) bash
 ```
 
 

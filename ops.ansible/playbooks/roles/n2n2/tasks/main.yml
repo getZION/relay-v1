@@ -1,17 +1,15 @@
 ---
-# - name: Print ec2 information
-#   debug: var=hostvars['n2n2-node'].ec2
-
-- name: Print ec2 information
+- name: Print ansible_hostname
   debug: var=ansible_hostname
 
-# - name: Print all available facts
-#   ansible.builtin.debug:
-#     var: hostvars
+- name: Print inventory_hostname
+  debug: var=inventory_hostname
 
-# - name: Print all available facts
-#   ansible.builtin.debug:
-#     var: hostvars
+# - name: Print ec2 information
+#   debug: var=hostvars[inventory_hostname].ec2
+
+- name: Print ansible_hostname
+  debug: var=ansible_host
 
 - name: Set NODE_DOMAIN
   lineinfile:
@@ -19,7 +17,16 @@
     create: yes
     state: present
     regexp: "^NODE_DOMAIN"
-    line: "NODE_DOMAIN={{ ansible_hostname }}"
+    line: "NODE_DOMAIN={{ inventory_hostname }}"
+  become: yes
+
+- name: Set NODE_IP
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^NODE_IP"
+    line: "NODE_IP={{ ansible_host }}"
   become: yes
 
 - name: Mkdir n2n2 client path dir
@@ -30,7 +37,7 @@
   become: true
   tags: provisioning
 
-- name: add github ssh key
+- name: add github private ssh key
   copy: >
     src=~/.ssh/id_rsa.github
     dest=/root/.ssh/id_rsa.github
@@ -39,7 +46,7 @@
     mode=0600
   become: yes
 
-- name: add github ssh key
+- name: add github public ssh key
   copy: >
     src=~/.ssh/id_rsa.github.pub
     dest=/root/.ssh/id_rsa.github.pub
