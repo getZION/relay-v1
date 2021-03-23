@@ -20,7 +20,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - NODE_DOMAIN=n2n2-relay-1.n2n2.chat
+      - NODE_DOMAIN=$NODE_DOMAIN
       - NODE_IP=$NODE_IP
       - NODE_ALIAS=$NODE_ALIAS
 

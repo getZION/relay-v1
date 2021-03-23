@@ -39,10 +39,7 @@
     name: docker
   become: yes
 
-  - name: Install required system packages
+- name: Install required system packages
   apt: name={{ item }} state=latest update_cache=yes
-  loop:
-    [
-      "docker-compose"
-    ]
+  loop: ["docker-compose"]
   become: yes
