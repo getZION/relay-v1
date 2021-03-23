@@ -1,22 +1,5 @@
 ---
-# Basic provisioning example
 - name: Create AWS resources
-  # hosts: localhost
-  # connection: local
-  # gather_facts: False
-  #
-  # vars_files:
-  #   - cluster_configs.yml
-  #
-  # tasks:
-  # - name: Debug
-  #   debug:
-  #     msg: "{{item.instance_type}}"
-  #   with_items: "{{cluster_configs}}"
-  #
-  # - include_tasks: start-node.yml config={{item}}
-  #   with_items: "{{cluster_configs}}"
-
   hosts: localhost
   connection: local
   gather_facts: False
