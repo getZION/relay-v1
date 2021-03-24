@@ -88,12 +88,7 @@
 - name: Start container
   shell: "cd /relay && docker-compose up -d"
   become: yes
-# - name: Fix permissions
-#   file:
-#     path: /srv
-#     owner: ubuntu
-#     group: ubuntu
-#     mode: 0755
-#     state: directory
-#     recurse: yes
-#   become: yes
+
+- name: Get connection_string.txt
+  shell: "docker exec -it $(docker ps --latest --quiet) cat /relay/connection_string.txt"
+  become: yes
