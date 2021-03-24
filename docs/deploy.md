@@ -3,25 +3,8 @@
 ## Stack DevOps/CI
 Stack is currently deployed to AWS via ansible.
 
-
 ## Stack DevOps
 To start see [Ansible](../ops.ansible/README.md)
-
-```
-# run ansible 
-# ssh into instance
-ssh -i ~/.ssh/n2n2 ec2-user@ec2-18-205-113-254.compute-1.amazonaws.com
-
-sudo -s
-cd /relay
-docker-compose up
-docker exec -it $(docker ps --latest --quiet) bash
-
-docker kill $(docker ps -q)
-
-tail -f /var/log/supervisor/lnd.log
-tail -f /var/log/supervisor/relay.log
-```
 
 ## Deprecated Flows
 

@@ -28,8 +28,6 @@ export async function connect(onMessage) {
         reconnectPeriod: 0, // dont auto reconnect
       })
 
-      console.log("A => ", info, pwd);
-
       client.on('connect', async function () {
         console.log("[tribes] connected!")
         client.subscribe(`${info.identity_pubkey}/#`)

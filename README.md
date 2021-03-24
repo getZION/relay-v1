@@ -7,7 +7,4 @@ To start see [Deploy](docs/deploy.md)
 To start see [Code](docs/code.md)
 
 ## Relay commands
-
-```
-cat /relay/connection_string.txt 
-```
+To start see [Relay](docs/relay.md)

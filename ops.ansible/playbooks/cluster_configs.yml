@@ -1,4 +1,6 @@
 ---
 cluster_configs:
-  - { instance_type: "c3.large", instance_name: "n2n2-relay-1" }
-  - { instance_type: "c3.large", instance_name: "n2n2-relay-2" }
+  - { instance_type: "t3.large", instance_name: "n2n2-relay-1" }
+  - { instance_type: "t3.large", instance_name: "n2n2-relay-2" }
+  - { instance_type: "t3.large", instance_name: "n2n2-relay-3" }
+  # - { instance_type: "c3.large", instance_name: "n2n2-relay-3" }

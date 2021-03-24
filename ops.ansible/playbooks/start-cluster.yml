@@ -22,13 +22,5 @@
 - hosts: relays
   gather_facts: yes
 
-  # vars:
-  #   # domain_name: "master.playentertainment.online"
-
   roles:
     - n2n2
-
-  # environment:
-  #   NODE_ENV: production
-  #   NODE_HOST: 0.0.0.0
-  #   PORT: 8080
