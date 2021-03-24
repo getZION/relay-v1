@@ -17,7 +17,12 @@ echo "Setting ENV vars..."
 # export NODE_DOMAIN=lvh.me
 
 export NODE_ALIAS=$HOSTNAME
-export NODE_IP=$NODE_SCHEME://$NODE_DOMAIN
+
+if [[ -z "${PORT}" ]]; then
+  export NODE_IP=$NODE_SCHEME://$NODE_DOMAIN
+else
+  export NODE_IP=$NODE_SCHEME://$NODE_DOMAIN:$PORT
+fi
 
 if [[ ! -f "/var/run/docker.sock" ]]; then
   echo "Docker socket found, pulling LND port..."
