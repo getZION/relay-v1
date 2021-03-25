@@ -29,6 +29,15 @@
     line: "NODE_IP={{ ansible_host }}"
   become: yes
 
+- name: Set TRIBES_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^TRIBES_HOST"
+    line: "TRIBES_HOST={{ tribes_host }}"
+  become: yes
+
 - name: Mkdir n2n2 client path dir
   file:
     path: "{{ n2n2_path }}"
@@ -88,6 +97,10 @@
 - name: Start container
   shell: "cd /relay && docker-compose up -d"
   become: yes
+
+- name: Timeout
+  pause:
+    seconds: 5
 
 - name: Get connection_string.txt
   shell: "docker exec -it $(docker ps --latest --quiet) cat /relay/connection_string.txt"

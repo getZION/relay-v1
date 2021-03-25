@@ -23,3 +23,6 @@ ansible-playbook -i inventory/hosts playbooks/terminate-cluster.yml
 ```
 docker kill $(docker ps -q)
 ```
+
+### Logs
+docker ps -q | xargs -L 1 docker logs -f

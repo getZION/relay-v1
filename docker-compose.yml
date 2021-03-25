@@ -23,8 +23,4 @@ services:
       - NODE_DOMAIN=$NODE_DOMAIN
       - NODE_IP=$NODE_IP
       - NODE_ALIAS=$NODE_ALIAS
-
-      # - NODE_IP=mynodeip
-      # - NODE_ALIAS=myalias
-      # - NODE_ENV=production
-      # - NODE_DOMAIN=0.0.0.0
+      - TRIBES_HOST=$TRIBES_HOST
