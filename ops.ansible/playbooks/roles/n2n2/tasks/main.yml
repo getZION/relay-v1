@@ -97,6 +97,12 @@
 - name: Start container
   shell: "cd /relay && docker-compose up -d"
   become: yes
+  when: not testnet
+
+- name: Start container [testnet]
+  shell: "cd /relay && docker-compose -f docker-compose-testnet.yml up -d"
+  become: yes
+  when: testnet
 
 - name: Timeout
   pause:

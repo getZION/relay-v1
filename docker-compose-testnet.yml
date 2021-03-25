@@ -6,7 +6,7 @@ services:
   relay:
     build:
       context: .
-      dockerfile: Dockerfile.n2n2.mainnet.lndrelay
+      dockerfile: Dockerfile.n2n2.testnet.lndrelay
     volumes:
       # - .:/relay
       # - .lnd/:/relay/.lnd
