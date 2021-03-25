@@ -38,6 +38,16 @@
     line: "TRIBES_HOST={{ tribes_host }}"
   become: yes
 
+- name: Set MACAROON_LOCATION
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MACAROON_LOCATION"
+    line: "MACAROON_LOCATION=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
+
 - name: Mkdir n2n2 client path dir
   file:
     path: "{{ n2n2_path }}"
@@ -97,16 +107,16 @@
 - name: Start container
   shell: "cd /relay && docker-compose up -d"
   become: yes
-  when: not testnet
+  when: not hostvars[inventory_hostname].testnet
 
 - name: Start container [testnet]
   shell: "cd /relay && docker-compose -f docker-compose-testnet.yml up -d"
   become: yes
-  when: testnet
+  when: hostvars[inventory_hostname].testnet
 
 - name: Timeout
   pause:
-    seconds: 5
+    seconds: 10
 
 - name: Get connection_string.txt
   shell: "docker exec -it $(docker ps --latest --quiet) cat /relay/connection_string.txt"

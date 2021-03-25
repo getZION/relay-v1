@@ -78,6 +78,7 @@
     ansible_python_interpreter: "/usr/bin/python3"
     ec2: "{{ ec2 }}"
     public_ip: "{{ instance_eip.public_ip }}"
+    testnet: config.testnet
 
 - name: Add to Route 53
   community.aws.route53:
