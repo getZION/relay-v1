@@ -51,7 +51,7 @@ RUN git checkout $n2n2_checkout
 
 RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python jq git curl libmcrypt-dev
 
-RUN apk --no-cache tor vim
+RUN apk --no-cache add tor vim
 
 RUN echo "Log notice stdout" >> /etc/torrc
 RUN echo "SocksPort 0.0.0.0:9150" >> /etc/torrc
