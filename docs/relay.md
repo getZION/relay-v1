@@ -24,3 +24,16 @@ tail -f /var/log/supervisor/relay.log
 ```
 cat /relay/connection_string.txt 
 ```
+
+## Lightning
+
+### Fund Wallet
+```
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon newaddress p2wkh
+```
+https://testnet-faucet.mempool.co
+https://bitcoinfaucet.uo1.net
+
+```
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon walletbalance
+```

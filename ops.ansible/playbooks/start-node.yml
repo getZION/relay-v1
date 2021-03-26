@@ -14,12 +14,14 @@
     aws_secret_key: "{{aws_secret_key}}"
     rules:
       - proto: all
-        cidr_ip: "{{my_local_cidr_ip}}"
+        cidr_ip: 0.0.0.0/0
+        cidr_ipv6: ::/0
       - proto: all
         group_name: ansible
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
+        cidr_ipv6: ::/0
   register: firewall
 
 - name: Create an EC2 instance
