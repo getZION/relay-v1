@@ -26,6 +26,7 @@ FROM alpine:3.11 as final
 
 EXPOSE 80
 EXPOSE 9735
+EXPOSE 9150
 
 ENV NODE_ENV production
 ENV NODE_SCHEME http
@@ -51,6 +52,9 @@ RUN git checkout $n2n2_checkout
 RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python jq git curl libmcrypt-dev
 
 RUN apk --no-cache tor vim
+
+RUN echo "Log notice stdout" >> /etc/torrc
+RUN echo "SocksPort 0.0.0.0:9150" >> /etc/torrc
 
 USER root
 
