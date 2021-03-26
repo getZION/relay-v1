@@ -15,6 +15,7 @@ services:
       - "3000:3000"
       - "9735:9735"
       - "10009:10009"
+      - "8333:8333"
     command: "lnd --accept-keysend --configfile=/relay/.lnd/lnd.conf && npm start"
     environment:
       - NODE_ENV=production
