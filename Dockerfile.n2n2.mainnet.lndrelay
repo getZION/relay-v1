@@ -50,6 +50,8 @@ RUN git checkout $n2n2_checkout
 
 RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python jq git curl libmcrypt-dev
 
+RUN apk --no-cache tor vim
+
 USER root
 
 RUN rm -rf node_modules/

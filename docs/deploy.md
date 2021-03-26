@@ -47,7 +47,7 @@ docker tag relay:latest relay:staging
 docker run relay:latest
 
 docker-compose -f docker-compose.n2n2.yml up
-docker-compose -f docker-compose.n2n2.yml up -dd
+docker-compose -f docker-compose.n2n2.yml up -d
 ```
 
 command=sh -c 'lnd --lnddir=/relay/.lnd/ --alias=$HOSTNAME --tlsextradomain=$NODE_DOMAIN --externalip=$NODE_DOMAIN'
