@@ -1,5 +1,7 @@
 ---
 cluster_configs:
-  # - { instance_type: "t3.large", instance_name: "n2n2-relay-4", testnet: true }
+  - { instance_type: "t3.large", instance_name: "n2n2-relay-4", testnet: true }
   - { instance_type: "t3.large", instance_name: "n2n2-relay-5", testnet: true }
   - { instance_type: "t3.large", instance_name: "n2n2-relay-6", testnet: true }
+  # Routing Node
+  - { instance_type: "t3.large", instance_name: "n2n2-relay-0", testnet: true }

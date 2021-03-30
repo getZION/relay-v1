@@ -28,13 +28,15 @@ process.env.NODE_EXTRA_CA_CERTS = config.tls_location;
 // START SETUP!
 async function start() {
 	await setupDatabase()
-	mainSetup()
+	await mainSetup()
 	// // IF NOT UNLOCK, go ahead and start this now
 	if (config.hub_api_url && !config.unlock) {
 		pingHubInterval(15000)
 	}
 }
-start()
+(async () => {
+	await start()
+})();
 
 async function mainSetup() {
 	await setupApp() // setup routes

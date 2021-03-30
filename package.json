@@ -1,5 +1,5 @@
 {
-  "name": "nodeapp",
+  "name": "n2n2-relay",
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
