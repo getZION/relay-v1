@@ -2,7 +2,8 @@
 
 ### Bash
 ```
-ssh -i ~/.ssh/n2n2 ubuntu@n2n2-relay-1.n2n2.chat
+ssh -i ~/.ssh/n2n2 ubuntu@n2n2-relay-0-staging.n2n2.chat
+ssh -i ~/.ssh/n2n2 ubuntu@n2n2-relay-0.n2n2.chat
 sudo -s
 docker exec -it $(docker ps --latest --quiet) bash
 ```

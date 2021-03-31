@@ -37,6 +37,37 @@
     regexp: "^TRIBES_HOST"
     line: "TRIBES_HOST={{ tribes_host }}"
   become: yes
+  when: not hostvars[inventory_hostname].testnet
+
+- name: Set TRIBES_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^TRIBES_HOST"
+    line: "TRIBES_HOST={{ tribes_host_staging }}"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
+
+- name: Set MEDIA_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MEDIA_HOST"
+    line: "MEDIA_HOST={{ tribes_host }}"
+  become: yes
+  when: not hostvars[inventory_hostname].testnet
+
+- name: Set MEDIA_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MEDIA_HOST"
+    line: "MEDIA_HOST={{ tribes_host }}"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
 
 - name: Set MACAROON_LOCATION
   lineinfile:
