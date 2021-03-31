@@ -31,16 +31,3 @@ cat /relay/connection_string.txt
 ```
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon getinfo
 ```
-
-## Open channel Channel
-```
-lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon connect 0317dd32b94d37fa0ee0a481f30cd6090e7b28e593937e5b9446a30cc534f87c07@34.196.0.95:9735
-```
-
-```
-lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon openchannel 0317dd32b94d37fa0ee0a481f30cd6090e7b28e593937e5b9446a30cc534f87c07 --local_amt=20000 --push_amt=5000 --sat_per_byte=35
-```
-
-```
-lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon sendpayment --dest=0317dd32b94d37fa0ee0a481f30cd6090e7b28e593937e5b9446a30cc534f87c07 --final_cltv_delta=10 --amt=5 --keysend
-```
