@@ -55,7 +55,7 @@
     create: yes
     state: present
     regexp: "^MEDIA_HOST"
-    line: "MEDIA_HOST={{ tribes_host }}"
+    line: "MEDIA_HOST={{ media_host }}"
   become: yes
   when: not hostvars[inventory_hostname].testnet
 
@@ -65,7 +65,7 @@
     create: yes
     state: present
     regexp: "^MEDIA_HOST"
-    line: "MEDIA_HOST={{ tribes_host }}"
+    line: "MEDIA_HOST={{ media_host_staging }}"
   become: yes
   when: hostvars[inventory_hostname].testnet
 
