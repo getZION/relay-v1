@@ -2,20 +2,37 @@
 # Bash Menu Script Example
 
 PS3='Please enter your choice: '
-options=("Option 1" "Option 2" "Option 3" "Quit")
+options=("create_wallet" "wallet_balance" "channel_balance" "log_lnd" "log_relay" "quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Option 1")
-            echo "you chose choice 1"
+        "create_wallet")            
+            cmd="lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon newaddress p2wkh"
+            echo $cmd
+            $cmd
             ;;
-        "Option 2")
-            echo "you chose choice 2"
+        "wallet_balance")
+            cmd="lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon walletbalance"
+            echo $cmd
+            $cmd
             ;;
-        "Option 3")
-            echo "you chose choice $REPLY which is $opt"
+        "channel_balance")
+            cmd="lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon channelbalance"
+            echo $cmd
+            $cmd            
             ;;
-        "Quit")
+        "log_lnd")
+            cmd="tail -f /var/log/supervisor/lnd.log"
+            echo $cmd
+            $cmd            
+            ;;
+        "log_relay")
+            cmd="tail -f /var/log/supervisor/relay.log"
+            echo $cmd
+            $cmd            
+            ;;
+
+        "quit")
             break
             ;;
         *) echo "invalid option $REPLY";;
