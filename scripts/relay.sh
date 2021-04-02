@@ -2,7 +2,7 @@
 # Bash Menu Script Example
 
 PS3='Please enter your choice: '
-options=("create_wallet" "wallet_balance" "channel_balance" "log_lnd" "log_relay" "quit")
+options=("create_wallet" "wallet_balance" "channel_balance" "list_channels" "log_lnd" "log_relay" "connection_string" "purge_local_db" "quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -21,6 +21,11 @@ do
             echo $cmd
             $cmd            
             ;;
+        "list_channels")
+            cmd="lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon listchannels"
+            echo $cmd
+            $cmd            
+            ;;
         "log_lnd")
             cmd="tail -f /var/log/supervisor/lnd.log"
             echo $cmd
@@ -31,10 +36,24 @@ do
             echo $cmd
             $cmd            
             ;;
+        "connection_string")
+            cmd="cat /relay/connection_string.txt "
+            echo $cmd
+            $cmd            
+            ;;
+        "purge_local_db")
+            cmd="supervisorctl stop relay && cd /relay && rm -rf sphinx.db && touch sphinx.db && supervisorctl start relay"
+            echo $cmd
+            $cmd            
+            ;;
 
         "quit")
             break
             ;;
-        *) echo "invalid option $REPLY";;
+        *) 
+            PS3="" # this hides the prompt
+            echo asdf | select foo in "${options[@]}"; do break; done # dummy select 
+            PS3="Please enter your choice: " # this displays the common prompt
+            ;;
     esac
 done
