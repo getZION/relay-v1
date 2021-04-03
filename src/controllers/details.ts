@@ -4,14 +4,14 @@ import * as readLastLines from 'read-last-lines'
 import { nodeinfo } from '../utils/nodeinfo';
 import constants from '../constants'
 import { models } from '../models'
-import {loadConfig} from '../utils/config'
+import { loadConfig } from '../utils/config'
 import { getAppVersionsFromHub } from '../hub'
 
 const config = loadConfig()
 
-export async function getAppVersions(req, res){
+export async function getAppVersions(req, res) {
 	const vs = await getAppVersionsFromHub()
-	if(vs) {
+	if (vs) {
 		success(res, vs)
 	} else {
 		failure(res, 'Could not load app versions')
@@ -100,6 +100,7 @@ export const getBalance = async (req, res) => {
 	res.status(200);
 	try {
 		const response = await channelBalance()
+
 		const channelList = await listChannels()
 		const { channels } = channelList
 		const reserve = channels.reduce((a, chan) => a + parseInt(chan.local_chan_reserve_sat), 0)

@@ -1,0 +1,48 @@
+---
+cluster_configs:
+  # # # Staging Routing Node
+  # - {
+  #     instance_type: "t3.large",
+  #     instance_name: "n2n2-relay-0-staging",
+  #     testnet: true,
+  #   }
+
+  # # # Production Routing Node
+  # # - {
+  # #     instance_type: "t3.large",
+  # #     instance_name: "n2n2-relay-0",
+  # #     testnet: false,
+  # #   }
+
+  # - {
+  #     instance_type: "t3.large",
+  #     instance_name: "n2n2-relay-1-staging",
+  #     testnet: true,
+  #   }
+  # - {
+  #     instance_type: "t3.large",
+  #     instance_name: "n2n2-relay-2-staging",
+  #     testnet: true,
+  #   }
+  # - {
+  #     instance_type: "t3.large",
+  #     instance_name: "n2n2-relay-3-staging",
+  #     testnet: true,
+  #   }
+
+  - {
+      instance_type: "t3.large",
+      instance_name: "n2n2-relay-4-staging",
+      testnet: true,
+    }
+  - {
+      instance_type: "t3.large",
+      instance_name: "n2n2-relay-5-staging",
+      testnet: true,
+    }
+
+  # - {
+  #     instance_type: "t3.large",
+  #     instance_name: "n2n2-relay-3-staging",
+  #     testnet: true,
+  #   }

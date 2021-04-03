@@ -6,8 +6,7 @@ services:
   relay:
     build:
       context: .
-      # dockerfile: Dockerfile.lndrelay
-      dockerfile: Dockerfile.n2n2.lndrelay
+      dockerfile: Dockerfile.n2n2.mainnet.lndrelay
     volumes:
       # - .:/relay
       # - .lnd/:/relay/.lnd
@@ -23,8 +22,6 @@ services:
       - NODE_DOMAIN=$NODE_DOMAIN
       - NODE_IP=$NODE_IP
       - NODE_ALIAS=$NODE_ALIAS
-
-      # - NODE_IP=mynodeip
-      # - NODE_ALIAS=myalias
-      # - NODE_ENV=production
-      # - NODE_DOMAIN=0.0.0.0
+      - TRIBES_HOST=$TRIBES_HOST
+      - MEDIA_HOST=$MEDIA_HOST
+      - MACAROON_LOCATION=$MACAROON_LOCATION

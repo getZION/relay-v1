@@ -1,11 +1,11 @@
 import * as publicIp from 'public-ip'
 import password from '../utils/password'
-import {loadConfig} from './config'
+import { loadConfig } from './config'
 const fs = require('fs')
 
 const config = loadConfig()
 
-export async function getQR():Promise<string> {
+export async function getQR(): Promise<string> {
   let theIP
 
   const public_url = config.public_url

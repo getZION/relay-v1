@@ -1,0 +1,158 @@
+---
+- name: Print ansible_hostname
+  debug: var=ansible_hostname
+
+- name: Print inventory_hostname
+  debug: var=inventory_hostname
+
+# - name: Print ec2 information
+#   debug: var=hostvars[inventory_hostname].ec2
+
+- name: Print ansible_hostname
+  debug: var=ansible_host
+
+- name: Set NODE_DOMAIN
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^NODE_DOMAIN"
+    line: "NODE_DOMAIN={{ inventory_hostname }}"
+  become: yes
+
+- name: Set NODE_IP
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^NODE_IP"
+    line: "NODE_IP={{ ansible_host }}"
+  become: yes
+
+- name: Set TRIBES_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^TRIBES_HOST"
+    line: "TRIBES_HOST={{ tribes_host }}"
+  become: yes
+  when: not hostvars[inventory_hostname].testnet
+
+- name: Set TRIBES_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^TRIBES_HOST"
+    line: "TRIBES_HOST={{ tribes_host_staging }}"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
+
+- name: Set MEDIA_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MEDIA_HOST"
+    line: "MEDIA_HOST={{ media_host }}"
+  become: yes
+  when: not hostvars[inventory_hostname].testnet
+
+- name: Set MEDIA_HOST
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MEDIA_HOST"
+    line: "MEDIA_HOST={{ media_host_staging }}"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
+
+- name: Set MACAROON_LOCATION
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MACAROON_LOCATION"
+    line: "MACAROON_LOCATION=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
+
+- name: Mkdir n2n2 client path dir
+  file:
+    path: "{{ n2n2_path }}"
+    state: directory
+    owner: ubuntu
+  become: true
+  tags: provisioning
+
+- name: add github private ssh key
+  copy: >
+    src=~/.ssh/id_rsa.github
+    dest=/root/.ssh/id_rsa.github
+    owner=root
+    group=root
+    mode=0600
+  become: yes
+
+- name: add github public ssh key
+  copy: >
+    src=~/.ssh/id_rsa.github.pub
+    dest=/root/.ssh/id_rsa.github.pub
+    owner=root
+    group=root
+    mode=0600
+  become: yes
+
+- name: configure ssh to use ansible key for github.com
+  template: >
+    src=templates/ssh_config.j2
+    dest=/root/.ssh/config
+    owner=root
+    group=root
+    mode=0644
+  become: yes
+
+- name: Add and load private key to ssh-agent
+  shell: "eval `ssh-agent -s` && ssh-add /root/.ssh/id_rsa.github"
+  become: yes
+
+- name: Set authorized key took from file
+  authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.github.pub') }}"
+  become: yes
+
+- name: clone a private repository
+  git: >
+    repo=git@github.com:n2n2dev/n2n2-relay.git
+    key_file=/root/.ssh/id_rsa.github
+    dest={{ n2n2_path }}
+    version={{ git_branch }}
+    force=yes
+    update=yes
+  become: yes
+
+- name: Start container
+  shell: "cd /relay && docker-compose up -d"
+  become: yes
+  when: not hostvars[inventory_hostname].testnet
+
+- name: Start container [testnet]
+  shell: "cd /relay && docker-compose -f docker-compose-testnet.yml up -d"
+  become: yes
+  when: hostvars[inventory_hostname].testnet
+
+- name: Timeout
+  pause:
+    seconds: 10
+
+- name: Get connection_string.txt
+  shell: "docker exec -it $(docker ps --latest --quiet) cat /relay/connection_string.txt"
+  register: shell_result
+  become: yes
+
+- name: Get connection_string.txt
+  debug: var=shell_result.stdout_lines

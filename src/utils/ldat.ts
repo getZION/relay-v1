@@ -1,6 +1,6 @@
 import * as zbase32 from './zbase32'
 import { signBuffer } from './lightning'
-import {loadConfig} from './config'
+import { loadConfig } from './config'
 
 const config = loadConfig()
 

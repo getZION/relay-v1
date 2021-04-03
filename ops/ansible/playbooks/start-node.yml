@@ -14,12 +14,14 @@
     aws_secret_key: "{{aws_secret_key}}"
     rules:
       - proto: all
-        cidr_ip: "{{my_local_cidr_ip}}"
+        cidr_ip: 0.0.0.0/0
+        cidr_ipv6: ::/0
       - proto: all
         group_name: ansible
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
+        cidr_ipv6: ::/0
   register: firewall
 
 - name: Create an EC2 instance
@@ -67,16 +69,33 @@
 
 - name: Add a host alias that we reach through a tunnel (Ansible >= 2.0)
   add_host:
-    name: "n2n2-node"
+    # name: "n2n2-node"
+    name: "{{ config.instance_name }}.n2n2.chat"
     hostname: "n2n2"
-    groups: dynamically_created_hosts
+    groups: relays
     ansible_host: "{{ instance_eip.public_ip }}"
     ansible_connection: "ssh"
     ansible_user: "ubuntu"
     ansible_ssh_private_key_file: "~/.ssh/n2n2"
     ansible_python_interpreter: "/usr/bin/python3"
-    ec2: "{{ec2}}"
+    ec2: "{{ ec2 }}"
+    public_ip: "{{ instance_eip.public_ip }}"
+    testnet: config.testnet
+
+- name: Add to Route 53
+  community.aws.route53:
+    state: present
+    zone: n2n2.chat
+    record: "{{ config.instance_name }}.n2n2.chat"
+    type: A
+    ttl: 300
+    value: "{{ instance_eip.public_ip }}"
+    wait: yes
+
+- name: Write the new ec2 instance host key to known hosts
+  connection: local
+  shell: "ssh-keyscan -H {{ instance_eip.public_ip }} >> ~/.ssh/known_hosts"
 
 - name: Timeout
   pause:
-    seconds: 15
+    seconds: 10

@@ -16,7 +16,7 @@ import * as network from '../network'
 import * as meme from '../utils/meme'
 import * as short from 'short-uuid'
 import constants from '../constants'
-import {loadConfig} from '../utils/config'
+import { loadConfig } from '../utils/config'
 
 const config = loadConfig()
 

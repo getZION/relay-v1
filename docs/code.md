@@ -1,6 +1,17 @@
 # Invite/Backup Restore Code
 
-Restore code:
+## Invite Code
+```
+cat /relay/connection_string.txt 
+
+aXA6Omh0dHA6Ly8ubjJuMi1yZWxheS0xLm4ybjIuY2hhdDo6NDJkMTg0MWYyMDE0MTNmN2RjNjczNjNkYmNkODhlMTY=
+
+base: 64
+ip::http://.n2n2-relay-1.n2n2.chat::42d1841f201413f7dc67363dbcd88e16
+
+```
+
+## Restore Code
 ```
 a2V5czo ... E9PQ==
 ```
@@ -14,8 +25,3 @@ private key::ip::auth_token
 
 what private key?
 what auth_token?
-
-```
-curl 54.221.115.136:3001
-curl stag-n2n2-relay.us-east-1.elasticbeanstalk.com:3001 
-```
