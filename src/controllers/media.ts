@@ -225,7 +225,19 @@ export const receivePurchase = async (payload) => {
   var date = new Date();
   date.setMilliseconds(0)
 
-  const { owner, sender, chat, amount, mediaToken, msg_uuid, chat_type, skip_payment_processing, purchaser_id, network_type } = await helpers.parseReceiveParams(payload)
+  const {
+    owner,
+    sender,
+    chat,
+    amount,
+    mediaToken,
+    msg_uuid,
+    chat_type,
+    skip_payment_processing,
+    purchaser_id,
+    network_type
+  } = await helpers.parseReceiveParams(payload)
+
   if (!owner || !sender || !chat) {
     return console.log('=> group chat not found!')
   }
@@ -242,6 +254,7 @@ export const receivePurchase = async (payload) => {
     updatedAt: date,
     network_type
   })
+
   socket.sendJson({
     type: 'purchase',
     response: jsonUtils.messageToJson(message, chat, sender)
@@ -251,11 +264,13 @@ export const receivePurchase = async (payload) => {
 
   // if sats forwarded from tribe owner, for the >1 time
   // dont need to send back token, because admin already has it
+
   if (isTribe && skip_payment_processing) {
     return console.log('=> skip payment processing')
   }
 
   const muid = mediaToken && mediaToken.split('.').length && mediaToken.split('.')[1]
+
   if (!muid) {
     return console.log('no muid')
   }
@@ -263,6 +278,7 @@ export const receivePurchase = async (payload) => {
   const ogMessage = await models.Message.findOne({
     where: { mediaToken }
   })
+
   if (!ogMessage) {
     return console.log('no original message')
   }
@@ -273,20 +289,25 @@ export const receivePurchase = async (payload) => {
       muid, receiver: isTribe ? 0 : sender.id,
     }
   })
+
   // console.log('mediaKey found!',mediaKey.dataValues)
   if (!mediaKey) return // this is from another person (admin is forwarding)
 
   const terms = parseLDAT(mediaToken)
+
   // get info
   let TTL = terms.meta && terms.meta.ttl
   let price = terms.meta && terms.meta.amt
+
   if (!TTL || !price) {
     const media = await getMediaInfo(muid)
     console.log("GOT MEDIA", media)
+
     if (media) {
       TTL = media.ttl && parseInt(media.ttl)
       price = media.price
     }
+
     if (!TTL) TTL = 31536000
     if (!price) price = 0
   }
@@ -312,7 +333,7 @@ export const receivePurchase = async (payload) => {
           response: jsonUtils.messageToJson(denyMsg, chat, sender)
         })
       },
-      failure: error => console.log('=> couldnt send purcahse deny', error),
+      failure: error => console.log('=> could not send purchase deny', error),
     })
   }
 
@@ -321,12 +342,15 @@ export const receivePurchase = async (payload) => {
     meta: { amt: amount },
     pubkey: sender.publicKey,
   })
+
   const msgToSend: { [k: string]: any } = {
     mediaToken: theMediaToken,
     mediaKey: mediaKey.key,
     mediaType: ogMessage.mediaType,
   }
+
   if (purchaser_id) msgToSend.purchaser = purchaser_id
+
   network.sendMessage({
     chat: { ...chat.dataValues, contactIds: [sender.id] }, // only to sender
     sender: owner,
@@ -346,8 +370,9 @@ export const receivePurchase = async (payload) => {
         response: jsonUtils.messageToJson(acceptMsg, chat, sender)
       })
     },
-    failure: error => console.log('=> couldnt send purchase accept', error),
+    failure: error => console.log('=> could not send purchase accept', error),
   })
+
 }
 
 export const receivePurchaseAccept = async (payload) => {
@@ -525,7 +550,7 @@ export async function cycleMediaToken() {
   }
 }
 
-const mediaURL = 'http://' + config.media_host + '/'
+const mediaURL = 'https://' + config.media_host + '/'
 
 export async function getMediaToken(force) {
   if (!force && meme.mediaToken) return meme.mediaToken
