@@ -42,7 +42,7 @@ do
             $cmd            
             ;;
         "purge_local_db")
-            cmd="supervisorctl stop relay && cd /relay && rm -rf sphinx.db && touch sphinx.db && supervisorctl start relay"
+            cmd="supervisorctl stop relay && rm -rf /relay/sphinx.db && touch /relay/sphinx.db && supervisorctl start relay"
             echo $cmd
             $cmd            
             ;;
