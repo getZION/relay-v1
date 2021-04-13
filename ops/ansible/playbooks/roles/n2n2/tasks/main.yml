@@ -5,8 +5,8 @@
 - name: Print inventory_hostname
   debug: var=inventory_hostname
 
-# - name: Print ec2 information
-#   debug: var=hostvars[inventory_hostname].ec2
+- name: Print testnet information
+  debug: var=hostvars[inventory_hostname].testnet
 
 - name: Print ansible_hostname
   debug: var=ansible_host
@@ -78,6 +78,16 @@
     line: "MACAROON_LOCATION=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon"
   become: yes
   when: hostvars[inventory_hostname].testnet
+
+- name: Set MACAROON_LOCATION
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^MACAROON_LOCATION"
+    line: "MACAROON_LOCATION=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon"
+  become: yes
+  when: not hostvars[inventory_hostname].testnet
 
 - name: Mkdir n2n2 client path dir
   file:
