@@ -85,7 +85,7 @@
     create: yes
     state: present
     regexp: "^MACAROON_LOCATION"
-    line: "MACAROON_LOCATION=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon"
+    line: "MACAROON_LOCATION=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon"
   become: yes
   when: not hostvars[inventory_hostname].testnet
 
