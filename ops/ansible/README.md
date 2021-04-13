@@ -14,10 +14,9 @@ code ops.ansible/playbooks/group_vars/all.yml
 ## Instructions
 ### Ansible
 ```
-cd ops/ansible
-ansible-playbook -i inventory/hosts playbooks/start-cluster.yml
+cd ops/ansible && ansible-playbook -i inventory/hosts playbooks/start-cluster.yml
 # OR
-ansible-playbook -i inventory/hosts playbooks/terminate-cluster.yml
+cd ops/ansible && ansible-playbook -i inventory/hosts playbooks/terminate-cluster.yml
 ```
 
 ```

@@ -1,10 +1,13 @@
 # Fund Wallet
 ```
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon newaddress p2wkh
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon newaddress p2wkh
 ```
 
 ```
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon walletbalance
+
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon channelbalance
 ```
 
@@ -22,9 +25,13 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testne
 ## Open channel channel
 ```
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon connect 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e@23.21.38.48:9735
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon connect 031dd1bd491f30d9c372018bc15639eac174bd49125db418fd7ca5e288435ce1fc@3.88.97.122:9735
 ```
 
 ```
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon openchannel 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e --local_amt=50000 --push_amt=10000 --sat_per_byte=35
+
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon openchannel 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e --local_amt=50000 --push_amt=10000 --sat_per_byte=35
 ```
 
