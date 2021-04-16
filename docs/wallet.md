@@ -19,6 +19,10 @@ https://testnet-faucet.mempool.co
 ## Send payment
 ```
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon sendpayment --dest=0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e --final_cltv_delta=10 --amt=5 --keysend
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon sendpayment --dest=02584a6540f8e4028c8f3372df069fbacf7e68bb95dbfc192e0310d481e46df298 --final_cltv_delta=10 --amt=5 --keysend
+
+
 ```
 
 
