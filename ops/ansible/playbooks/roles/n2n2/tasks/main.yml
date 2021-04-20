@@ -89,6 +89,15 @@
   become: yes
   when: not hostvars[inventory_hostname].testnet
 
+- name: Set CONNECT_UI
+  lineinfile:
+    dest: /etc/environment
+    create: yes
+    state: present
+    regexp: "^CONNECT_UI"
+    line: "CONNECT_UI=true"
+  become: yes
+
 - name: Mkdir n2n2 client path dir
   file:
     path: "{{ n2n2_path }}"
