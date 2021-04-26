@@ -12,6 +12,7 @@ docker exec -it $(docker ps --latest --quiet) bash
 
 ```
 docker-compose --env-file .env up 
+docker-compose -f docker-compose-testnet.yml up -d
 ```
 
 ## Reset 
