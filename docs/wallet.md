@@ -21,10 +21,6 @@ https://testnet-faucet.mempool.co
 ## Send payment
 ```
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon sendpayment --dest=0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e --final_cltv_delta=10 --amt=5 --keysend
-
-lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon sendpayment --dest=02584a6540f8e4028c8f3372df069fbacf7e68bb95dbfc192e0310d481e46df298 --final_cltv_delta=10 --amt=5 --keysend
-
-
 ```
 
 
@@ -38,8 +34,31 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainne
 ```
 
 ```
-lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon openchannel 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e --local_amt=15000 --push_amt=000 --sat_per_byte=1
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon openchannel 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e --local_amt=15000 --push_amt=5000 --sat_per_byte=1
+```
 
-lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon openchannel 023202c8e0d1a32cf43fb068fe8507930d5a30a6add62070875bd12c99e2ed2862 --local_amt=15000 --push_amt=5000 --sat_per_byte=35
+```
+# 1
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon connect 033267b4da39deb4411d0e7faedba049608d17888ef7177ab40f6704844c450cb7@52.86.65.63:9735
+
+# 2
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon connect 0355f124523fbd884195cbccb989f937d3a7a8e17bb21ca496435c59f3cd022e65@54.162.44.156:9735
+
+# 0
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon openchannel 033267b4da39deb4411d0e7faedba049608d17888ef7177ab40f6704844c450cb7 --local_amt=75000 --push_amt=10000 --sat_per_byte=35
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon openchannel 0355f124523fbd884195cbccb989f937d3a7a8e17bb21ca496435c59f3cd022e65 --local_amt=75000 --push_amt=10000 --sat_per_byte=35 --min_confs=0
+#
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon sendpayment --dest=033267b4da39deb4411d0e7faedba049608d17888ef7177ab40f6704844c450cb7 --final_cltv_delta=10 --amt=20000 --keysend
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon sendpayment --dest=0355f124523fbd884195cbccb989f937d3a7a8e17bb21ca496435c59f3cd022e65 --final_cltv_delta=10 --amt=20000 --keysend
+
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon wallet bumpfee 7b07f8e925dfc1988276974586fb897b4cfd487f6132dbe8cd9525f90edd8696 --sat_per_byte 150
+
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon wallet bumpfee  --sat_per_byte 110 7b07f8e925dfc1988276974586fb897b4cfd487f6132dbe8cd9525f90edd8696:0
+
 ```
 

@@ -34,6 +34,12 @@
     name: "{{ ec2.instances[0].public_dns_name }}"
     state: "absent"
 
+- name: Remove host from known_hosts
+  known_hosts:
+    path: ~/.ssh/known_hosts
+    name: "{{ config.instance_name }}.n2n2.chat"
+    state: "absent"
+
 - name: Retrieve the Records First
   route53:
     state: get
