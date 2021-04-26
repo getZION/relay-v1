@@ -8,6 +8,12 @@ sudo -s
 docker exec -it $(docker ps --latest --quiet) bash
 ```
 
+## Docker
+
+```
+docker-compose --env-file .env up 
+```
+
 ## Reset 
 ```
 supervisorctl stop relay
