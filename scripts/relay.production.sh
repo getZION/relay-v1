@@ -2,7 +2,7 @@
 # Bash Menu Script Example
 
 PS3='Please enter your choice: '
-options=("create_wallet" "wallet_balance" "channel_balance" "list_channels" "log_lnd" "log_relay" "connection_string" "purge_local_db" "quit")
+options=("create_wallet" "wallet_balance" "channel_balance" "list_channels" "log_lnd" "log_relay" "connection_string" "getinfo" "quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -41,8 +41,8 @@ do
             echo $cmd
             $cmd            
             ;;
-        "purge_local_db")
-            cmd="supervisorctl stop relay && rm -rf /relay/sphinx.db && touch /relay/sphinx.db && supervisorctl start relay"
+        "getinfo")
+            cmd="lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon getinfo"
             echo $cmd
             $cmd            
             ;;

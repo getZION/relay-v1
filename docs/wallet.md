@@ -62,3 +62,12 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainne
 
 ```
 
+
+
+``` tenants
+
+# staging-0 tenants-staging-0
+
+lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon connect 02769cb20e1e970bce33ba5d1e4f8c4260cc58bdecd28dbfb4930193e02e605459@54.90.35.89:9735
+
+```
