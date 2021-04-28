@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as grpc from 'grpc'
 import { loadConfig } from './config'
-import {loadCredentials} from './lightning'
+import { loadCredentials } from './lightning'
 import { models } from '../models'
 import fetch from 'node-fetch'
 
@@ -15,45 +15,45 @@ export function isProxy(): boolean {
 }
 
 export function genUsersInterval(ms) {
-  if(!isProxy()) return
-  setTimeout(()=>{ // so it starts a bit later than pingHub
+  if (!isProxy()) return
+  setTimeout(() => { // so it starts a bit later than pingHub
     setInterval(generateNewUsers, ms)
-  }, 2000) 
+  }, 2000)
 }
 
-const NEW_USER_NUM = (config.proxy_new_nodes || config.proxy_new_nodes===0) ? config.proxy_new_nodes : 2
+const NEW_USER_NUM = (config.proxy_new_nodes || config.proxy_new_nodes === 0) ? config.proxy_new_nodes : 2
 const SATS_PER_USER = config.proxy_initial_sats || 5000
 // isOwner users with no authToken
-export async function generateNewUsers(){
-  if(!isProxy()) return
-  const newusers = await models.Contact.findAll({where:{isOwner:true,authToken:null}})
-  if(newusers.length>=NEW_USER_NUM) return // we already have the mimimum
-  const n1 = NEW_USER_NUM-newusers.length
+export async function generateNewUsers() {
+  if (!isProxy()) return
+  const newusers = await models.Contact.findAll({ where: { isOwner: true, authToken: null } })
+  if (newusers.length >= NEW_USER_NUM) return // we already have the mimimum
+  const n1 = NEW_USER_NUM - newusers.length
 
   const virtualBal = await getProxyTotalBalance()
-  if(!virtualBal) return // skip
+  if (!virtualBal) return // skip
   const realBal = await getProxyLNDBalance()
 
   let availableBalance = realBal - virtualBal
-  if(availableBalance<SATS_PER_USER) availableBalance=1
-  const n2 = Math.floor(availableBalance/SATS_PER_USER)
-  const n = Math.min(n1,n2)
+  if (availableBalance < SATS_PER_USER) availableBalance = 1
+  const n2 = Math.floor(availableBalance / SATS_PER_USER)
+  const n = Math.min(n1, n2)
 
-  if(!n) return
+  if (!n) return
   console.log('=> gen new users:', n)
   const arr = new Array(n)
   const rootpk = await getProxyRootPubkey()
-  await asyncForEach(arr, async ()=>{
+  await asyncForEach(arr, async () => {
     await generateNewUser(rootpk)
   })
 }
 
-const adminURL = config.proxy_admin_url ? (config.proxy_admin_url+'/') : 'http://localhost:5555/'
-export async function generateNewUser(rootpk: string){
+const adminURL = config.proxy_admin_url ? (config.proxy_admin_url + '/') : 'http://localhost:5555/'
+export async function generateNewUser(rootpk: string) {
   try {
     const r = await fetch(adminURL + 'generate', {
-      method:'POST',
-      headers:{'x-admin-token':config.proxy_admin_token}
+      method: 'POST',
+      headers: { 'x-admin-token': config.proxy_admin_token }
     })
     const j = await r.json()
     const contact = {
@@ -64,23 +64,23 @@ export async function generateNewUser(rootpk: string){
     }
     const created = await models.Contact.create(contact)
     // set tenant to self!
-    created.update({tenant:created.id})
+    created.update({ tenant: created.id })
     console.log("=> CREATED OWNER:", created.dataValues)
-  } catch(e) {
+  } catch (e) {
     console.log('=> could not gen new user', e)
   }
 }
 
 // "total" is in msats
-export async function getProxyTotalBalance(){
+export async function getProxyTotalBalance() {
   try {
     const r = await fetch(adminURL + 'balances', {
-      method:'GET',
-      headers:{'x-admin-token':config.proxy_admin_token}
+      method: 'GET',
+      headers: { 'x-admin-token': config.proxy_admin_token }
     })
     const j = await r.json()
-    return j.total ? Math.floor(j.total/1000) : 0
-  } catch(e) {
+    return j.total ? Math.floor(j.total / 1000) : 0
+  } catch (e) {
     return 0
   }
 }
@@ -99,15 +99,15 @@ export function loadProxyCredentials(macPrefix: string) {
   return grpc.credentials.combineChannelCredentials(sslCreds, macaroonCreds);
 }
 
-export async function loadProxyLightning(ownerPubkey?:string) {
+export async function loadProxyLightning(ownerPubkey?: string) {
   try {
     let macname
-    if(ownerPubkey && ownerPubkey.length===66) {
+    if (ownerPubkey && ownerPubkey.length === 66) {
       macname = ownerPubkey
     } else {
       try {
         macname = await getProxyRootPubkey()
-      } catch(e) {
+      } catch (e) {
 
       }
     }
@@ -116,7 +116,7 @@ export async function loadProxyLightning(ownerPubkey?:string) {
     var lnrpc: any = lnrpcDescriptor.lnrpc_proxy
     const the = new lnrpc.Lightning(PROXY_LND_IP + ':' + config.proxy_lnd_port, credentials);
     return the
-  } catch(e) {
+  } catch (e) {
     console.log("ERROR in loadProxyLightning", e)
   }
 }
@@ -124,8 +124,8 @@ export async function loadProxyLightning(ownerPubkey?:string) {
 var proxyRootPubkey = ''
 
 function getProxyRootPubkey(): Promise<string> {
-  return new Promise((resolve,reject)=>{
-    if(proxyRootPubkey) {
+  return new Promise((resolve, reject) => {
+    if (proxyRootPubkey) {
       resolve(proxyRootPubkey)
       return
     }
@@ -146,7 +146,7 @@ function getProxyRootPubkey(): Promise<string> {
 }
 
 function getProxyLNDBalance(): Promise<number> {
-  return new Promise((resolve,reject)=>{
+  return new Promise((resolve, reject) => {
     // normal client, to get pubkey of LND
     var credentials = loadCredentials()
     var lnrpcDescriptor = grpc.load("proto/rpc.proto");
@@ -173,7 +173,7 @@ function getProxyLNDBalance(): Promise<number> {
 
 
 async function asyncForEach(array, callback) {
-	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index, array);
-	}
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
 }
