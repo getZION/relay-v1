@@ -6,6 +6,7 @@ import { models } from '../models'
 import fetch from 'node-fetch'
 
 // var protoLoader = require('@grpc/proto-loader')
+
 const config = loadConfig()
 const LND_IP = config.lnd_ip || 'localhost'
 const PROXY_LND_IP = config.proxy_lnd_ip || 'localhost'
