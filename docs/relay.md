@@ -46,3 +46,9 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testne
 
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon getinfo
 ```
+
+## Tor
+
+```
+https://sachsenhofer.io/setup-tor-docker-container/
+```

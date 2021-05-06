@@ -34,7 +34,7 @@ do
             ;;
         
         "start_testnet_local")
-            cmd="docker-compose -f docker-compose-testnet.yml --env-file .env up -d"
+            cmd="docker-compose -f docker-compose-testnet.yml up -d"
             echo $cmd
             $cmd            
             ;;
