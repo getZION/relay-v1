@@ -71,3 +71,17 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainne
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon connect 02769cb20e1e970bce33ba5d1e4f8c4260cc58bdecd28dbfb4930193e02e605459@54.90.35.89:9735
 
 ```
+
+## Fund with ZAP
+
+```
+docker cp d808b2b4f4f0:/relay/.lnd /relay/.lnd
+scp -i ~/.ssh/n2n2 -r root@n2n2-relay-0-staging.n2n2.chat:/relay/.lnd .
+```
+```
+0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e@23.21.38.48:9735
+0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e@http://n2n2-relay-0-staging.n2n2.chat
+
+
+0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e@http://n2n2-relay-0-staging.n2n2.chat
+```

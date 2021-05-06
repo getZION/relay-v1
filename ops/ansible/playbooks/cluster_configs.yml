@@ -7,9 +7,21 @@ cluster_configs:
       testnet: true,
     }
 
-  # # # Prodcution Routing Node
-  # - {
-  #     instance_type: "t3.large",
-  #     instance_name: "tenants-relay-0",
-  #     testnet: false,
-  #   }
+  # # Prodcution Routing Node
+  - {
+      instance_type: "t3.large",
+      instance_name: "tenants-relay-0",
+      testnet: false,
+    }
+
+  - {
+      instance_type: "t3.large",
+      instance_name: "n2n2-relay-4-staging",
+      testnet: true,
+    }
+
+  - {
+      instance_type: "t3.large",
+      instance_name: "n2n2-relay-5-staging",
+      testnet: true,
+    }
