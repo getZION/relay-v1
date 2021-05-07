@@ -28,8 +28,12 @@ RUN apk update && apk add \
     tor \
     --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
     && rm -rf /var/cache/apk/*
+
 EXPOSE 9050
+EXPOSE 9051
+
 COPY torrc.default /etc/tor/torrc.default
+# RUN chown -R tor /etc/tor
 
 # RUN apt update && apt install -y curl gpg wget && \
 #     mkdir -p /home/volt/.gnupg && \
@@ -40,14 +44,6 @@ COPY torrc.default /etc/tor/torrc.default
 #     apt update && apt install -y \
 #     tor \
 #     deb.torproject.org-keyring
-
-RUN apk update && apk add \
-    tor \
-    --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
-    && rm -rf /var/cache/apk/*
-EXPOSE 9050
-COPY torrc.default /etc/tor/torrc.default
-RUN chown -R tor /etc/tor
 
 EXPOSE 80
 EXPOSE 9735
