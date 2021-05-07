@@ -1,4 +1,4 @@
-SocksPort 0.0.0.0:9050
+SocksPort 9050
 Log notice stdout
 ControlPort 9051
 CookieAuthentication 1

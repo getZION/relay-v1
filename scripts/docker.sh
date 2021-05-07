@@ -2,7 +2,7 @@
 # Bash Menu Script Example
 
 PS3='Please enter your choice: '
-options=("bash" "reset" "logs" "kill" "start_testnet" "start_testnet_local" "start_mainnet" "quit")
+options=("bash" "reset" "logs" "kill" "start_testnet" "start_testnet_local" "start_mainnet" "import_lnd.tar.gz" "quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -44,6 +44,13 @@ do
             echo $cmd
             $cmd            
             ;;
+
+        "import_lnd.tar.gz")
+            cmd="docker cp $(docker ps -q):/relay/lnd.tar.gz /relay/lnd.tar.gz"
+            echo $cmd
+            $cmd            
+            ;;
+
 
         "quit")
             break

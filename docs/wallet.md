@@ -74,8 +74,13 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testne
 
 ## Fund with ZAP
 
+```
+tar -czvf lnd.tar.gz .lnd
+tar -xzvf lnd.tar.gz .lnd
+```
+
 ```BACKUP
-docker cp d808b2b4f4f0:/relay/.lnd /relay/.lnd
+docker cp $(docker ps -q):/relay/lnd.tar.gz /relay/lnd.tar.gz
 scp -i ~/.ssh/n2n2 -r root@n2n2-relay-0-staging.n2n2.chat:/relay/.lnd .
 ```
 
