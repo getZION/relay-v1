@@ -54,6 +54,9 @@ else
   sleep 5
 fi
 
+echo "Starting tor..."
+supervisorctl start tor
+
 echo "Starting relay..."
 supervisorctl start relay
 
