@@ -32,8 +32,8 @@ RUN apk update && apk add \
 EXPOSE 9050
 EXPOSE 9051
 
-COPY torrc.default /etc/tor/torrc.default
-# RUN chown -R tor /etc/tor
+COPY torrc.default /etc/tor/torrc
+RUN chown -R tor /etc/tor
 
 # RUN apt update && apt install -y curl gpg wget && \
 #     mkdir -p /home/volt/.gnupg && \

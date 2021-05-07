@@ -38,7 +38,7 @@ function_menu_logs () {
 
 function_menu_main () {
   PS3='Please enter your choice: '
-    options=("create_wallet" "wallet_balance" "channel_balance" "list_channels" "logs" "connection_string" "getinfo" "quit")
+    options=("create_wallet" "wallet_balance" "channel_balance" "list_channels" "logs" "connection_string" "getinfo" "check_tor" "quit")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -72,6 +72,12 @@ function_menu_main () {
                 ;;
             "getinfo")
                 cmd="lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon getinfo"
+                echo $cmd
+                $cmd            
+                ;;
+                
+            "check_tor")
+                cmd="curl --socks5 localhost:9050 --socks5-hostname localhost:9050 -s https://check.torproject.org/ | cat | grep -m 1 Congratulations | xargs"
                 echo $cmd
                 $cmd            
                 ;;
