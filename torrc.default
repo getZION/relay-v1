@@ -1,1 +1,4 @@
 SocksPort 0.0.0.0:9050
+Log notice stdou
+ControlPort 9051
+CookieAuthentication 1t
