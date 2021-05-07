@@ -74,10 +74,16 @@ lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testne
 
 ## Fund with ZAP
 
-```
+```BACKUP
 docker cp d808b2b4f4f0:/relay/.lnd /relay/.lnd
 scp -i ~/.ssh/n2n2 -r root@n2n2-relay-0-staging.n2n2.chat:/relay/.lnd .
 ```
+
+```RESTORE
+docker cp /relay/.lnd 45e08742c9f1:/relay/.lnd.0
+scp -i ~/.ssh/n2n2 -r root@n2n2-relay-0-staging.n2n2.chat:/relay/.lnd .
+```
+
 ```
 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e@23.21.38.48:9735
 0228af7ad42a56c4069a7af192d139747e98283dfc8d5ba8da9884821c3ef2758e@http://n2n2-relay-0-staging.n2n2.chat

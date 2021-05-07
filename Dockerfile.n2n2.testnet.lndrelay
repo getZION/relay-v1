@@ -113,6 +113,7 @@ RUN mkdir -p /var/log/supervisor
 COPY ./docker/supervisord.conf /etc/supervisord.conf
 COPY ./docker/lnd_supervisor.conf /etc/supervisor.d/lnd_supervisor.ini
 COPY ./docker/relay_supervisor.conf /etc/supervisor.d/relay_supervisor.ini
+COPY ./docker/tor_supervisor.conf /etc/supervisor.d/tor_supervisor.ini
 COPY ./docker/aliases.sh /etc/profile.d/aliases.sh
 
 CMD touch ./sphinx.db
