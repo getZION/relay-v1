@@ -4,6 +4,9 @@ import fetch from "node-fetch";
 import { Op } from "sequelize";
 import constants from "./constants";
 
+import { loadConfig } from "./utils/config";
+const config = loadConfig();
+
 type NotificationType =
   | "group_join"
   | "group_leave"
@@ -129,13 +132,13 @@ async function finalNotification(
   let unseenMessages = await models.Message.count({
     where,
   });
-  if(!unseenMessages) return
+  if (!unseenMessages) return
   params.notification.badge = unseenMessages;
   triggerNotification(params);
 }
 
 function triggerNotification(params: { [k: string]: any }) {
-  fetch("https://hub.sphinx.chat/api/v1/nodes/notify", {
+  fetch(config.hub_api_url + "/nodes/notify", {
     method: "POST",
     body: JSON.stringify(params),
     headers: { "Content-Type": "application/json" },
@@ -144,7 +147,7 @@ function triggerNotification(params: { [k: string]: any }) {
   });
 }
 
-export {sendNotification}
+export { sendNotification }
 
 const bounceTimeouts = {};
 const tribeCounts = {};

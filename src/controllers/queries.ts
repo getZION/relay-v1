@@ -10,7 +10,10 @@ import { Op } from "sequelize";
 import fetch from "node-fetch";
 import * as helpers from "../helpers";
 import { isProxy } from "../utils/proxy";
-import {logging} from '../utils/logger'
+import { logging } from '../utils/logger'
+
+import { loadConfig } from "../utils/config";
+const config = loadConfig();
 
 type QueryType = "onchain_address";
 export interface Query {
@@ -26,7 +29,7 @@ const POLL_MINS = 10;
 
 let hub_pubkey = "";
 
-const hub_url = "https://hub.sphinx.chat/api/v1/";
+const hub_url = config.hub_api_url;
 export async function get_hub_pubkey(): Promise<string> {
   const r = await fetch(hub_url + "/routingnode");
   const j = await r.json();
@@ -360,7 +363,7 @@ export const receiveQuery = async (payload) => {
 };
 
 export const receiveQueryResponse = async (payload) => {
-  if(logging.Network) console.log("=> receiveQueryResponse");
+  if (logging.Network) console.log("=> receiveQueryResponse");
   const dat = payload.content || payload;
   // const sender_pub_key = dat.sender.pub_key
   const content = dat.message.content;
