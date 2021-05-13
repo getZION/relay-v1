@@ -70,6 +70,7 @@ const sendNotification = async (
       console.log("[send notification] skipping. owner.deviceId not set.");
     return;
   }
+
   const device_id = owner.deviceId;
   const isIOS = device_id.length === 64;
   const isAndroid = !isIOS;
@@ -120,6 +121,9 @@ async function finalNotification(
     if (logging.Notification)
       console.log("[send notification]", params.notification);
   }
+
+  console.log("A");
+
   const where: { [k: string]: any } = {
     sender: { [Op.ne]: ownerID },
     seen: false,
