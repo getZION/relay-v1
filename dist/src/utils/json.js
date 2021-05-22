@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.accountingToJson = exports.botToJson = exports.subscriptionToJson = exports.chatToJson = exports.jsonToContact = exports.inviteToJson = exports.contactToJson = exports.messageToJson = void 0;
-const case_1 = require("../utils/case");
-const cronUtils = require("./cron");
+import { toSnake, toCamel } from '../utils/case';
+import * as cronUtils from './cron';
 function chatToJson(c) {
     if (!c)
         return {};
@@ -13,9 +10,8 @@ function chatToJson(c) {
         contactIds = JSON.parse(chat.contactIds);
     }
     delete chat.groupPrivateKey;
-    return case_1.toSnake(Object.assign(Object.assign({}, chat), { contactIds }));
+    return toSnake({}, ...chat, contactIds);
 }
-exports.chatToJson = chatToJson;
 function messageToJson(msg, chat, contact) {
     if (!msg)
         return {};
@@ -24,28 +20,23 @@ function messageToJson(msg, chat, contact) {
     if (message.statusMap && typeof message.statusMap === 'string') {
         statusMap = JSON.parse(message.statusMap);
     }
-    return case_1.toSnake(Object.assign(Object.assign({}, message), { amount: message.amount ? parseInt(message.amount) : 0, amountMsat: message.amountMsat ? parseInt(message.amountMsat) : 0, statusMap, chat: chat ? chatToJson(chat) : null, contact: contact ? contactToJson(contact) : null }));
+    return toSnake({}, ...message, 
+    // type: message.type ? parseInt(message.type) : 0,
+    amount, message.amount ? parseInt(message.amount) : 0, amountMsat, message.amountMsat ? parseInt(message.amountMsat) : 0, statusMap, chat, chat ? chatToJson(chat) : null, contact, contact ? contactToJson(contact) : null);
 }
-exports.messageToJson = messageToJson;
 function contactToJson(contact) {
     if (!contact)
         return {};
-    return case_1.toSnake(contact.dataValues || contact);
+    return toSnake(contact.dataValues || contact);
 }
-exports.contactToJson = contactToJson;
-const inviteToJson = (invite) => case_1.toSnake(invite.dataValues || invite);
-exports.inviteToJson = inviteToJson;
-const botToJson = (bot) => case_1.toSnake(bot.dataValues || bot);
-exports.botToJson = botToJson;
-const accountingToJson = (acc) => case_1.toSnake(acc.dataValues || acc);
-exports.accountingToJson = accountingToJson;
-const jsonToContact = (json) => case_1.toCamel(json);
-exports.jsonToContact = jsonToContact;
+const inviteToJson = (invite) => toSnake(invite.dataValues || invite);
+const botToJson = (bot) => toSnake(bot.dataValues || bot);
+const accountingToJson = (acc) => toSnake(acc.dataValues || acc);
+const jsonToContact = (json) => toCamel(json);
 function subscriptionToJson(subscription, chat) {
     const sub = subscription.dataValues || subscription;
     const { interval, next } = cronUtils.parse(sub.cron);
-    return case_1.toSnake(Object.assign(Object.assign({}, sub), { interval,
-        next, chat: chat ? chatToJson(chat) : null }));
+    return toSnake({}, ...sub, interval, next, chat, chat ? chatToJson(chat) : null);
 }
-exports.subscriptionToJson = subscriptionToJson;
+export { messageToJson, contactToJson, inviteToJson, jsonToContact, chatToJson, subscriptionToJson, botToJson, accountingToJson };
 //# sourceMappingURL=json.js.map

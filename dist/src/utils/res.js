@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.failure200 = exports.failure = exports.success = void 0;
 function success(res, json) {
     res.status(200);
     res.json({
@@ -9,16 +6,16 @@ function success(res, json) {
     });
     res.end();
 }
-exports.success = success;
 function failure(res, e) {
+    const errorMessage = (e && e.message) || e;
+    console.log('--> failure:', errorMessage);
     res.status(400);
     res.json({
         success: false,
-        error: (e && e.message) || e,
+        error: errorMessage,
     });
     res.end();
 }
-exports.failure = failure;
 function failure200(res, e) {
     res.status(200);
     res.json({
@@ -27,5 +24,5 @@ function failure200(res, e) {
     });
     res.end();
 }
-exports.failure200 = failure200;
+export { success, failure, failure200 };
 //# sourceMappingURL=res.js.map

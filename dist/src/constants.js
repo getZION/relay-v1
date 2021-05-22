@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const constants = {
     min_sat_amount: 3,
     invite_statuses: {
@@ -92,5 +90,5 @@ const constants = {
         "reader": 5
     }
 };
-exports.default = constants;
+export default constants;
 //# sourceMappingURL=constants.js.map

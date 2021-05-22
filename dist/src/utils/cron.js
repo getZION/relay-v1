@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.make = exports.parse = void 0;
-const parser = require("cron-parser");
+import * as parser from 'cron-parser';
 function daily() {
     const now = new Date();
     const minute = now.getMinutes();
@@ -33,7 +30,6 @@ function parse(s) {
     }
     return { interval: 'weekly', next, ms: 86400000 * 7 };
 }
-exports.parse = parse;
 function make(interval) {
     if (interval === 'daily')
         return daily();
@@ -42,5 +38,5 @@ function make(interval) {
     if (interval === 'monthly')
         return monthly();
 }
-exports.make = make;
+export { parse, make };
 //# sourceMappingURL=cron.js.map

@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.toCamel = exports.toSnake = void 0;
-const changeCase = require("change-case");
+import * as changeCase from "change-case";
 const dateKeys = ['date', 'createdAt', 'updatedAt', 'created_at', 'updated_at'];
-const boolKeys = ['fromGroup', 'isOwner', 'deleted'];
+const boolKeys = ['fromGroup', 'isOwner', 'deleted', 'seen', 'isMuted', 'unlisted', 'private', 'privatePhoto', 'skipBroadcastJoins'];
 function toSnake(obj) {
     const ret = {};
     for (let [key, value] of Object.entries(obj)) {
@@ -23,7 +20,6 @@ function toSnake(obj) {
     }
     return ret;
 }
-exports.toSnake = toSnake;
 function toCamel(obj) {
     const ret = {};
     for (let [key, value] of Object.entries(obj)) {
@@ -31,5 +27,5 @@ function toCamel(obj) {
     }
     return ret;
 }
-exports.toCamel = toCamel;
+export { toSnake, toCamel };
 //# sourceMappingURL=case.js.map

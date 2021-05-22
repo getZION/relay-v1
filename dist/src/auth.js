@@ -1,145 +1,197 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.base64ToHex = exports.authModule = exports.unlocker = void 0;
-const crypto = require("crypto");
-const models_1 = require("./models");
-const cryptoJS = require("crypto-js");
-const res_1 = require("./utils/res");
-const macaroon_1 = require("./utils/macaroon");
-const config_1 = require("./utils/config");
-const fs = require('fs');
-const config = config_1.loadConfig();
-/*
-"unlock": true,
-"encrypted_macaroon_path": "/relay/.lnd/admin.macaroon.enc"
-*/
+import * as crypto from "crypto";
+import * as cryptoJS from "crypto-js";
+import { success, failure } from "./utils/res";
+import { setInMemoryMacaroon } from "./utils/macaroon";
+import { loadConfig } from "./utils/config";
+import { isProxy } from "./utils/proxy";
+const fs = require("fs");
+const config = loadConfig();
+async;
 function unlocker(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { password } = req.body;
-        if (!password) {
-            res_1.failure(res, 'no password');
+    const { password } = req.body;
+    if (!password) {
+        failure(res, "no password");
+        return false;
+    }
+    const encMacPath = config.encrypted_macaroon_path;
+    if (!encMacPath) {
+        failure(res, "no macaroon path");
+        return false;
+    }
+    let hexMac;
+    try {
+        var encMac = fs.readFileSync(config.encrypted_macaroon_path, "utf8");
+        if (!encMac) {
+            failure(res, "no macaroon");
             return false;
         }
-        const encMacPath = config.encrypted_macaroon_path;
-        if (!encMacPath) {
-            res_1.failure(res, 'no macaroon path');
+        const decMac = decryptMacaroon(password, encMac);
+        if (!decMac) {
+            failure(res, "failed to decrypt macaroon");
             return false;
         }
-        let hexMac;
-        try {
-            var encMac = fs.readFileSync(config.encrypted_macaroon_path, "utf8");
-            if (!encMac) {
-                res_1.failure(res, 'no macaroon');
-                return false;
-            }
-            const decMac = decryptMacaroon(password, encMac);
-            if (!decMac) {
-                res_1.failure(res, 'failed to decrypt macaroon');
-                return false;
-            }
-            const isBase64 = b64regex.test(decMac);
-            if (!isBase64) {
-                res_1.failure(res, 'failed to decode macaroon');
-                return false;
-            }
-            hexMac = base64ToHex(decMac);
-        }
-        catch (e) {
-            res_1.failure(res, e);
+        const isBase64 = b64regex.test(decMac);
+        if (!isBase64) {
+            failure(res, "failed to decode macaroon");
             return false;
         }
-        if (hexMac) {
-            macaroon_1.setInMemoryMacaroon(hexMac);
-            res_1.success(res, 'success!');
-            yield sleep(100);
-            return true;
-        }
-        else {
-            res_1.failure(res, 'failed to set macaroon in memory');
-            return false;
-        }
-    });
+        hexMac = base64ToHex(decMac);
+    }
+    catch (e) {
+        failure(res, e);
+        return false;
+    }
+    if (hexMac) {
+        setInMemoryMacaroon(hexMac);
+        success(res, "success!");
+        await;
+        sleep(100);
+        return true;
+    }
+    else {
+        failure(res, "failed to set macaroon in memory");
+        return false;
+    }
 }
-exports.unlocker = unlocker;
-function authModule(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (req.path == '/app' ||
-            req.path == '/' ||
-            req.path == '/unlock' ||
-            req.path == '/info' ||
-            req.path == '/action' ||
-            req.path == '/contacts/tokens' ||
-            req.path == '/latest' ||
-            req.path.startsWith('/static') ||
-            req.path == '/contacts/set_dev' ||
-            req.path == '/connect' ||
-            req.path == '/utxos') {
+async;
+function ownerMiddleware(req, res, next) {
+    if (req.path == "/app" ||
+        req.path == "/" ||
+        req.path == "/unlock" ||
+        req.path == "/info" ||
+        req.path == "/action" ||
+        req.path == "/contacts/tokens" ||
+        req.path == "/latest" ||
+        req.path.startsWith("/static") ||
+        req.path == "/contacts/set_dev" ||
+        req.path == "/connect") {
+        next();
+        return;
+    }
+    const token = req.headers["x-user-token"] || req.cookies["x-user-token"];
+    if (process.env.HOSTING_PROVIDER === "true") {
+        if (token) {
+            // add owner in anyway
+            const hashedToken = crypto
+                .createHash("sha256")
+                .update(token)
+                .digest("base64");
+            const owner = await, models, Contact, findOne = ({
+                where: { authToken: hashedToken, isOwner: true },
+            });
+            if (owner) {
+                req.owner = owner.dataValues;
+            }
+        }
+        else if (!isProxy()) {
+            const owner2 = await, models, Contact, findOne = ({
+                where: { isOwner: true },
+            });
+            if (owner2)
+                req.owner = owner2.dataValues;
+        }
+        if (req.path === "/invoices") {
             next();
             return;
         }
-        if (process.env.HOSTING_PROVIDER === 'true') {
-            // const host = req.headers.origin
-            // const referer = req.headers.referer
-            if (req.path === '/invoices') {
-                next();
-                return;
-            }
-        }
-        const token = req.headers['x-user-token'] || req.cookies['x-user-token'];
-        if (token == null) {
-            res.writeHead(401, 'Access invalid for user', { 'Content-Type': 'text/plain' });
-            res.end('Invalid credentials');
-        }
-        else {
-            const user = yield models_1.models.Contact.findOne({ where: { isOwner: true } });
-            const hashedToken = crypto.createHash('sha256').update(token).digest('base64');
-            if (user.authToken == null || user.authToken != hashedToken) {
-                res.writeHead(401, 'Access invalid for user', { 'Content-Type': 'text/plain' });
-                res.end('Invalid credentials');
-            }
-            else {
-                next();
-            }
-        }
+    }
+    if (!token) {
+        res.writeHead(401, "Access invalid for user", {
+            "Content-Type": "text/plain",
+        });
+        res.end("Invalid credentials");
+        return;
+    }
+    const hashedToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("base64");
+    const owner = await, models, Contact, findOne = ({
+        where: { authToken: hashedToken, isOwner: true },
     });
+    if (!owner) {
+        res.writeHead(401, "Access invalid for user", {
+            "Content-Type": "text/plain",
+        });
+        res.end("Invalid credentials");
+    }
+    else {
+        req.owner = owner.dataValues;
+        next();
+    }
 }
-exports.authModule = authModule;
 function decryptMacaroon(password, macaroon) {
     try {
-        const decrypted = cryptoJS.AES.decrypt(macaroon || '', password).toString(cryptoJS.enc.Base64);
+        const decrypted = cryptoJS.AES.decrypt(macaroon || "", password).toString(cryptoJS.enc.Base64);
         const decryptResult = atob(decrypted);
         return decryptResult;
     }
     catch (e) {
-        console.error('cipher mismatch, macaroon decryption failed');
+        console.error("cipher mismatch, macaroon decryption failed");
         console.error(e);
-        return '';
+        return "";
     }
 }
-function base64ToHex(str) {
+export function base64ToHex(str) {
     const raw = atob(str);
-    let result = '';
+    let result = "";
     for (let i = 0; i < raw.length; i++) {
         const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
+        result += hex.length === 2 ? hex : "0" + hex;
     }
     return result.toUpperCase();
 }
-exports.base64ToHex = base64ToHex;
-const atob = a => Buffer.from(a, 'base64').toString('binary');
+const atob = (a) => Buffer.from(a, "base64").toString("binary");
+async;
 function sleep(ms) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    });
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 const b64regex = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
+async;
+function authModule(req, res, next) {
+    if (req.path == "/app" ||
+        req.path == "/" ||
+        req.path == "/unlock" ||
+        req.path == "/info" ||
+        req.path == "/action" ||
+        req.path == "/contacts/tokens" ||
+        req.path == "/latest" ||
+        req.path.startsWith("/static") ||
+        req.path == "/contacts/set_dev" ||
+        req.path == "/connect") {
+        next();
+        return;
+    }
+    if (process.env.HOSTING_PROVIDER === "true") {
+        // const host = req.headers.origin
+        // const referer = req.headers.referer
+        if (req.path === "/invoices") {
+            next();
+            return;
+        }
+    }
+    const token = req.headers["x-user-token"] || req.cookies["x-user-token"];
+    if (token == null) {
+        res.writeHead(401, "Access invalid for user", {
+            "Content-Type": "text/plain",
+        });
+        res.end("Invalid credentials");
+    }
+    else {
+        const user = await, models, Contact, findOne = ({ where: { isOwner: true } });
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(token)
+            .digest("base64");
+        if (user.authToken == null || user.authToken != hashedToken) {
+            res.writeHead(401, "Access invalid for user", {
+                "Content-Type": "text/plain",
+            });
+            res.end("Invalid credentials");
+        }
+        else {
+            next();
+        }
+    }
+}
 //# sourceMappingURL=auth.js.map

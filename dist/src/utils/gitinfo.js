@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkTag = exports.checkCommitHash = void 0;
-const child_process_1 = require("child_process");
+import { exec } from 'child_process';
 let commitHash;
 function checkCommitHash() {
     return new Promise((resolve, reject) => {
@@ -9,7 +6,7 @@ function checkCommitHash() {
             return resolve(commitHash);
         }
         try {
-            child_process_1.exec(`git log -1 --pretty=format:%h`, { timeout: 999 }, (error, stdout, stderr) => {
+            exec(`git log -1 --pretty=format:%h`, { timeout: 999 }, (error, stdout, stderr) => {
                 if (stdout) {
                     commitHash = stdout.trim();
                     return resolve(commitHash);
@@ -25,7 +22,6 @@ function checkCommitHash() {
         }
     });
 }
-exports.checkCommitHash = checkCommitHash;
 let tag;
 function checkTag() {
     return new Promise((resolve, reject) => {
@@ -33,7 +29,7 @@ function checkTag() {
             return resolve(tag);
         }
         try {
-            child_process_1.exec(`git describe --abbrev=0 --tags`, { timeout: 999 }, (error, stdout, stderr) => {
+            exec(`git describe --abbrev=0 --tags`, { timeout: 999 }, (error, stdout, stderr) => {
                 if (stdout) {
                     tag = stdout.trim();
                     return resolve(tag);
@@ -49,5 +45,5 @@ function checkTag() {
         }
     });
 }
-exports.checkTag = checkTag;
+export { checkCommitHash, checkTag };
 //# sourceMappingURL=gitinfo.js.map
