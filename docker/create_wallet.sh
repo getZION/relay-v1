@@ -35,3 +35,5 @@ expect -exact "\r
 Confirm password: "
 send -- "$WALLET_PASSPHRASE\r"
 expect eof
+
+echo "Wallet created."
