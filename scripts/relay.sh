@@ -81,7 +81,7 @@ function_menu_logs () {
 
 function_menu_main () {
   PS3='Please enter your choice: '
-    options=("lnclie" "logs" "connection_string" "check_tor" "quit")
+    options=("lncli" "logs" "connection_string" "check_tor" "reset_sphinx_db" "quit")
     select opt in "${options[@]}"
     do
         case $opt in
