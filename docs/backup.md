@@ -17,4 +17,5 @@ exit
 ## update node endpoint 
 # menu -> pull_backup
 
+# rename backup.tar.gz to backup_<NODE_ALIAS>.tar.gz
 ```

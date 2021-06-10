@@ -7,7 +7,7 @@ select opt in "${options[@]}"
 do
     case $opt in
         "pull_backup")
-            cmd="scp -i ~/.ssh/n2n2 -r root@n2n2-relay-0-staging.n2n2.chat:/relay/backup.tar.gz ."
+            cmd="scp -i ~/.ssh/n2n2 -r ubuntu@n2n2-relay-3-staging.n2n2.chat:/relay/backup.tar.gz ."
             echo $cmd
             $cmd            
             ;;
