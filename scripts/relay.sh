@@ -81,7 +81,7 @@ function_menu_logs () {
 
 function_menu_main () {
   PS3='Please enter your choice: '
-    options=("lncli" "logs" "connection_string" "check_tor" "reset_sphinx_db" "quit")
+    options=("lncli" "logs" "check_tor" "reset_sphinx_db" "create_backup" "quit")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -91,12 +91,6 @@ function_menu_main () {
 
             "logs")
                 function_menu_logs       
-                ;;
-
-            "connection_string")
-                cmd="cat /relay/connection_string.txt "
-                echo $cmd
-                $cmd            
                 ;;
                 
             "check_tor")
@@ -115,6 +109,12 @@ function_menu_main () {
                 cmd="supervisorctl restart relay"
                 echo $cmd
                 $cmd      
+                ;;
+
+            "create_backup")
+                cmd="tar -cvzf backup.tar.gz sphinx.db .lnd"
+                echo $cmd
+                $cmd    
                 ;;
 
             "quit")
