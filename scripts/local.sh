@@ -2,12 +2,18 @@
 # Bash Menu Script Example
 
 PS3='Please enter your choice: '
-options=("pull_backup" "reveal" "quit")
+options=("pull_backup" "push_backup" "reveal" "quit")
 select opt in "${options[@]}"
 do
     case $opt in
         "pull_backup")
-            cmd="scp -i ~/.ssh/n2n2 -r ubuntu@n2n2-relay-3-staging.n2n2.chat:/relay/backup.tar.gz ."
+            cmd="scp -i ~/.ssh/n2n2 -r ubuntu@relay-1.n2n2.chat:/relay/backup.tar.gz ."
+            echo $cmd
+            $cmd            
+            ;;
+
+        "push_backup")
+            cmd="scp -i ~/.ssh/n2n2 -r ./backup.tar.gz ubuntu@relay-1.n2n2.chat:/relay/backup.tar.gz"
             echo $cmd
             $cmd            
             ;;

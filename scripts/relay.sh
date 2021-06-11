@@ -81,7 +81,7 @@ function_menu_logs () {
 
 function_menu_main () {
   PS3='Please enter your choice: '
-    options=("lncli" "logs" "check_tor" "reset_sphinx_db" "create_backup" "quit")
+    options=("lncli" "logs" "check_tor" "reset_sphinx_db" "create_backup" "apply_backup" "quit")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -115,6 +115,13 @@ function_menu_main () {
                 cmd="tar -cvzf backup.tar.gz sphinx.db .lnd"
                 echo $cmd
                 $cmd    
+                ;;
+
+
+            "apply_backup")
+                cmd="tar -xzvf backup.tar.gz"
+                echo $cmd
+                $cmd         
                 ;;
 
             "quit")

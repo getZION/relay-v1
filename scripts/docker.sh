@@ -2,7 +2,7 @@
 # Bash Menu Script Example
 
 PS3='Please enter your choice: '
-options=("bash" "reset" "logs" "kill" "start_testnet" "start_testnet_local" "start_mainnet" "pull_backup" "quit")
+options=("bash" "reset" "logs" "kill" "start_mainnet" "pull_backup" "push_backup" "quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -27,18 +27,6 @@ do
             $cmd            
             ;;
 
-        "start_testnet")
-            cmd="docker-compose -f docker-compose-testnet.yml up -d"
-            echo $cmd
-            $cmd            
-            ;;
-        
-        "start_testnet_local")
-            cmd="docker-compose -f docker-compose-testnet.yml up -d"
-            echo $cmd
-            $cmd            
-            ;;
-
         "start_mainnet")
             cmd="docker-compose -f docker-compose.yml up -d"
             echo $cmd
@@ -51,6 +39,11 @@ do
             $cmd            
             ;;
 
+        "push_backup")
+            cmd="docker cp /relay/backup.tar.gz $(docker ps -q):/relay/backup.tar.gz"
+            echo $cmd
+            $cmd            
+            ;;
 
         "quit")
             break
