@@ -118,9 +118,15 @@ function_menu_main () {
                 ;;
 
             "apply_backup")
+                cmd="supervisorctl stop relay"
+                echo $cmd
+                $cmd 
                 cmd="supervisorctl stop lnd"
                 echo $cmd
-                $cmd    
+                $cmd 
+                cmd="supervisorctl stop tor"
+                echo $cmd
+                $cmd         
                 cmd="rm -rf .lnd"
                 echo $cmd
                 $cmd    
@@ -131,6 +137,15 @@ function_menu_main () {
                 echo $cmd
                 $cmd 
                 cmd="supervisorctl start lnd"
+                echo $cmd
+                $cmd   
+                cmd="supervisorctl start tor"
+                echo $cmd
+                $cmd 
+                cmd="supervisorctl start lnd"
+                echo $cmd
+                $cmd 
+                cmd="supervisorctl start relay"
                 echo $cmd
                 $cmd           
                 ;;
