@@ -44,3 +44,5 @@ secrets/
 admin.macaroon
 tls.cert
 lnd.tar.gz
+
+backups

@@ -34,13 +34,13 @@ do
             ;;
 
         "pull_backup")
-            cmd="docker cp $(docker ps -q):/relay/backup.tar.gz /relay/backup.tar.gz"
+            cmd="docker cp $(docker ps -q):/relay/export.tar.gz /relay/export.tar.gz"
             echo $cmd
             $cmd            
             ;;
 
         "push_backup")
-            cmd="docker cp /relay/backup.tar.gz $(docker ps -q):/relay/backup.tar.gz"
+            cmd="docker cp /relay/import.tar.gz $(docker ps -q):/relay/import.tar.gz"
             echo $cmd
             $cmd            
             ;;

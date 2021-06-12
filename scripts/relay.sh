@@ -112,14 +112,25 @@ function_menu_main () {
                 ;;
 
             "create_backup")
-                cmd="tar -cvzf backup.tar.gz sphinx.db .lnd"
+                cmd="tar -cvzf export.tar.gz sphinx.db .lnd"
                 echo $cmd
                 $cmd    
                 ;;
 
-
             "apply_backup")
-                cmd="tar -xzvf backup.tar.gz"
+                cmd="rm -rf .lnd"
+                echo $cmd
+                $cmd    
+                cmd="rm -rf sphinx.db"
+                echo $cmd
+                $cmd   
+                cmd="tar -xzvf import.tar.gz"
+                echo $cmd
+                $cmd         
+                ;;
+
+            "undo_backup")
+                cmd="tar -xzvf export.tar.gz"
                 echo $cmd
                 $cmd         
                 ;;
