@@ -118,6 +118,9 @@ function_menu_main () {
                 ;;
 
             "apply_backup")
+                cmd="supervisorctl stop lnd"
+                echo $cmd
+                $cmd    
                 cmd="rm -rf .lnd"
                 echo $cmd
                 $cmd    
@@ -126,7 +129,10 @@ function_menu_main () {
                 $cmd   
                 cmd="tar -xzvf import.tar.gz"
                 echo $cmd
-                $cmd         
+                $cmd 
+                cmd="supervisorctl start lnd"
+                echo $cmd
+                $cmd           
                 ;;
 
             "undo_backup")
