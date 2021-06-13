@@ -142,9 +142,6 @@ function_menu_main () {
                 cmd="supervisorctl start tor"
                 echo $cmd
                 $cmd 
-                cmd="supervisorctl start lnd"
-                echo $cmd
-                $cmd 
                 cmd="supervisorctl start relay"
                 echo $cmd
                 $cmd           
