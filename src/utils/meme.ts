@@ -3,16 +3,12 @@ import { urlBase64FromBytes } from "../utils/ldat";
 import * as zbase32 from "../utils/zbase32";
 import * as rp from "request-promise";
 import * as helpers from "../helpers";
-import { loadConfig } from "../utils/config";
 import { signBuffer } from "../utils/lightning";
 import { loadLightning } from '../utils/lightning'
 
 import { getMemeUrl } from '../utils/helpers';
 
 import { logging } from './logger'
-
-const config = loadConfig();
-
 interface tokenStore {
   token: string;
   ts: number; // seconds
