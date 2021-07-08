@@ -121,9 +121,6 @@ async function finalNotification(
     if (logging.Notification)
       console.log("[send notification]", params.notification);
   }
-
-  console.log("A");
-
   const where: { [k: string]: any } = {
     sender: { [Op.ne]: ownerID },
     seen: false,

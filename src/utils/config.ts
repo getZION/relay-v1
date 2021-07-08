@@ -28,6 +28,7 @@ export function loadConfig() {
     hub_url: ENV.HUB_URL || config.hub_url,
     hub_invite_url: ENV.HUB_INVITE_URL || config.hub_invite_url,
     hub_check_invite_url: ENV.HUB_CHECK_INVITE_URL || config.hub_check_invite_url,
+    media_host_protocol: ENV.MEDIA_HOST_PROTOCOL || config.media_host_protocol,
     media_host: ENV.MEDIA_HOST || config.media_host,
     tribes_host: ENV.TRIBES_HOST || config.tribes_host,
     tribes_mqtt_port: ENV.TRIBES_MQTT_PORT || config.tribes_mqtt_port,
@@ -37,7 +38,7 @@ export function loadConfig() {
     ssl: {
       enabled: (ENV.SSL_ENABLED || (config.ssl && config.ssl.enabled)) ? true : false,
       save: (ENV.SSL_SAVE || (config.ssl && config.ssl.save)) ? true : false,
-      port: ENV.SSL_PORT || (config.ssl && config.ssl.port) 
+      port: ENV.SSL_PORT || (config.ssl && config.ssl.port)
     },
     encrypted_macaroon_path: ENV.ENCRYPTED_MACAROON_PATH || config.encrypted_macaroon_path,
     loop_macaroon_location: ENV.LOOP_MACAROON_LOCATION || config.loop_macaroon_location,

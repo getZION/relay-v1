@@ -16,7 +16,9 @@ import * as short from "short-uuid";
 import constants from "../constants";
 import { loadConfig } from "../utils/config";
 import { failure } from "../utils/res";
-import {logging} from '../utils/logger'
+import { logging } from '../utils/logger'
+
+import { getMemeUrl } from '../utils/helpers';
 
 const config = loadConfig();
 
@@ -241,7 +243,7 @@ export const purchase = async (req, res) => {
 /* RECEIVERS */
 
 export const receivePurchase = async (payload) => {
-  if(logging.Network) console.log("=> received purchase", { payload });
+  if (logging.Network) console.log("=> received purchase", { payload });
 
   var date = new Date();
   date.setMilliseconds(0);
@@ -409,7 +411,7 @@ export const receivePurchase = async (payload) => {
 };
 
 export const receivePurchaseAccept = async (payload) => {
-  if(logging.Network) console.log("=> receivePurchaseAccept");
+  if (logging.Network) console.log("=> receivePurchaseAccept");
   var date = new Date();
   date.setMilliseconds(0);
 
@@ -469,7 +471,7 @@ export const receivePurchaseAccept = async (payload) => {
 };
 
 export const receivePurchaseDeny = async (payload) => {
-  if(logging.Network) console.log("=> receivePurchaseDeny");
+  if (logging.Network) console.log("=> receivePurchaseDeny");
   var date = new Date();
   date.setMilliseconds(0);
   const {
@@ -606,7 +608,9 @@ export async function verifier(msg, sig) {
 export async function getMediaInfo(muid, pubkey: string) {
   try {
     const token = await meme.lazyToken(pubkey, config.media_host);
-    const mediaURL = "http://" + config.media_host + "/";
+
+    const mediaURL = getMemeUrl(config.media_host);
+
     const res = await rp.get(mediaURL + "mymedia/" + muid, {
       headers: {
         Authorization: `Bearer ${token}`,

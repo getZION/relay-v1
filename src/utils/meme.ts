@@ -6,7 +6,10 @@ import * as helpers from "../helpers";
 import { loadConfig } from "../utils/config";
 import { signBuffer } from "../utils/lightning";
 import { loadLightning } from '../utils/lightning'
-import {logging} from './logger'
+
+import { getMemeUrl } from '../utils/helpers';
+
+import { logging } from './logger'
 
 const config = loadConfig();
 
@@ -29,22 +32,21 @@ export async function lazyToken(pubkey: string, host: string) {
 
   try {
     const t = await getMediaToken(pubkey, host);
-    if(!tokens[pubkey]) tokens[pubkey]={}
+    if (!tokens[pubkey]) tokens[pubkey] = {}
     tokens[pubkey][host] = {
       token: t,
       ts: moment().unix()
     }
     return t
-  } catch(e) {
-    if(logging.Meme) console.log("[meme] error getting token", e)
+  } catch (e) {
+    if (logging.Meme) console.log("[meme] error getting token", e)
   }
 }
 
-const mediaURL = "http://" + config.media_host + "/";
-
 export async function getMediaToken(ownerPubkey: string, host?: string) {
   // console.log("[meme] gET MEDIA TOEKN", ownerPubkey)
-  const theURL = host ? "http://" + host + "/" : mediaURL;
+  const theURL = getMemeUrl(host);
+
   await helpers.sleep(300);
   try {
     const res = await rp.get(theURL + "ask");
@@ -55,7 +57,7 @@ export async function getMediaToken(ownerPubkey: string, host?: string) {
     const sig = await signBuffer(Buffer.from(r.challenge, "base64"), ownerPubkey);
 
     if (!sig) throw new Error("no signature");
-    let pubkey:string = ownerPubkey
+    let pubkey: string = ownerPubkey
     // if(!pubkey) {
     //   pubkey = await getMyPubKey()
     // }
@@ -63,7 +65,7 @@ export async function getMediaToken(ownerPubkey: string, host?: string) {
     const sigBytes = zbase32.decode(sig);
     const sigBase64 = urlBase64FromBytes(sigBytes);
 
-    if(logging.Meme) console.log('[meme] verify', pubkey)
+    if (logging.Meme) console.log('[meme] verify', pubkey)
     const bod = await rp.post(theURL + "verify", {
       form: { id: r.id, sig: sigBase64, pubkey },
     });
