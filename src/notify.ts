@@ -168,3 +168,7 @@ function debounce(func, id, delay) {
     tribeCounts[id] = 0;
   }, delay);
 }
+
+export function resetNotifyTribeCount(chatID:number) {
+  tribeCounts[chatID] = 0
+}
