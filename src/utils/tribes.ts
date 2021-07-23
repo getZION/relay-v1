@@ -9,7 +9,7 @@ import { makeBotsJSON, declare_bot } from "./tribeBots";
 import { loadConfig } from "./config";
 import { isProxy } from "./proxy";
 import { Op } from "sequelize";
-import {logging} from './logger'
+import { logging } from './logger'
 import { sleep } from "../helpers";
 
 export { declare_bot };
@@ -63,17 +63,27 @@ async function initializeClient(pubkey, host, onMessage): Promise<mqtt.Client> {
           password: pwd,
           reconnectPeriod: 0, // dont auto reconnect
         });
-        if(logging.Tribes) console.log("[tribes] try to connect:", url);
+        if (logging.Tribes) console.log("[tribes] try to connect:", url);
         cl.on("connect", async function () {
-          if(logging.Tribes) console.log("[tribes] connected!");
+          // first check if its already connected to this host (in case it takes a long time)
           connected = true
+          if (clients[pubkey] && clients[pubkey][host] && clients[pubkey][host].connected) {
+            resolve(clients[pubkey][host]);
+            return
+          }
+          if (logging.Tribes) console.log("[tribes] connected!");
+          if (!clients[pubkey]) clients[pubkey] = {};
+          clients[pubkey][host] = cl; // ADD TO MAIN STATE
           cl.on("close", function (e) {
-            if(logging.Tribes) console.log("[tribes] CLOSE", e);
+            if (logging.Tribes) console.log("[tribes] CLOSE", e);
             // setTimeout(() => reconnect(), 2000);
             connected = false
+            if (clients[pubkey] && clients[pubkey][host]) {
+              delete clients[pubkey][host]
+            }
           });
           cl.on("error", function (e) {
-            if(logging.Tribes) console.log("[tribes] error: ", e.message || e);
+            if (logging.Tribes) console.log("[tribes] error: ", e.message || e);
           });
           cl.on("message", function (topic, message) {
             // console.log("============>>>>> GOT A MSG", topic, message)
@@ -82,20 +92,20 @@ async function initializeClient(pubkey, host, onMessage): Promise<mqtt.Client> {
           cl.subscribe(`${pubkey}/#`, function (err) {
             if (err) console.log("[tribes] error subscribing", err);
             else {
-              if(logging.Tribes) console.log("[tribes] subscribed!", `${pubkey}/#`);
+              if (logging.Tribes) console.log("[tribes] subscribed!", `${pubkey}/#`);
               resolve(cl);
             }
           });
         });
-      } catch(e) {
-        if(logging.Tribes) console.log('[tribes] error initializing', e)
+      } catch (e) {
+        if (logging.Tribes) console.log('[tribes] error initializing', e)
       }
     }
     while (true) {
-      if(!connected) {
+      if (!connected) {
         reconnect();
       }
-      await sleep(5000 + Math.round(Math.random()*8000))
+      await sleep(5000 + Math.round(Math.random() * 8))
     }
   });
 }
@@ -227,10 +237,10 @@ async function updateTribeStats(myPubkey) {
         chatId: tribe.id,
         owner_pubkey: myPubkey,
       });
-    } catch (e) {}
+    } catch (e) { }
   });
   if (myTribes.length) {
-    if(logging.Tribes) console.log(`[tribes] updated stats for ${myTribes.length} tribes`);
+    if (logging.Tribes) console.log(`[tribes] updated stats for ${myTribes.length} tribes`);
   }
 }
 
@@ -241,7 +251,7 @@ export async function subscribe(topic, onMessage: Function) {
   const client = await lazyClient(pubkey, host, onMessage);
   if (client)
     client.subscribe(topic, function () {
-      if(logging.Tribes) console.log("[tribes] added sub", host, topic);
+      if (logging.Tribes) console.log("[tribes] added sub", host, topic);
     });
 }
 
@@ -435,7 +445,7 @@ export async function genSignedTimestamp(ownerPubkey: string) {
     const totalLength = tsBytes.length + sigBytes.length;
     const buf = Buffer.concat([tsBytes, sigBytes], totalLength);
     return urlBase64(buf);
-  } catch(e) {
+  } catch (e) {
     throw e
   }
 }
