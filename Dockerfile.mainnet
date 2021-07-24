@@ -9,7 +9,8 @@ ENV GODEBUG netdns=cgo
 # image to be built from a specified Git state.  The default image
 # will use the Git tip of master by default.
 # ARG checkout="v0.11.1-beta"
-ARG checkout="v0.12.1-beta-branch"
+# ARG checkout="v0.12.1-beta-branch"
+ARG checkout="0-13-1-branch"
 # ARG checkout="master"
 
 # Install dependencies and build the binaries.
