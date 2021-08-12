@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.testRSA = exports.genKeys = exports.decrypt = exports.encrypt = void 0;
-const crypto = require("crypto");
+import * as crypto from "crypto";
 const BLOCK_SIZE = 256;
 const MAX_CHUNK_SIZE = BLOCK_SIZE - 11; // 11 is the PCKS1 padding
-function encrypt(key, txt) {
+export function encrypt(key, txt) {
     try {
         const buf = Buffer.from(txt);
         let finalBuf = Buffer.from([]);
@@ -24,8 +21,7 @@ function encrypt(key, txt) {
         return '';
     }
 }
-exports.encrypt = encrypt;
-function decrypt(privateKey, enc) {
+export function decrypt(privateKey, enc) {
     try {
         const buf = Buffer.from(enc, 'base64');
         let finalDec = '';
@@ -45,8 +41,7 @@ function decrypt(privateKey, enc) {
         return '';
     }
 }
-exports.decrypt = decrypt;
-function genKeys() {
+export function genKeys() {
     return new Promise((resolve, reject) => {
         crypto.generateKeyPair('rsa', {
             modulusLength: 2048
@@ -66,8 +61,7 @@ function genKeys() {
         });
     });
 }
-exports.genKeys = genKeys;
-function testRSA() {
+export function testRSA() {
     crypto.generateKeyPair('rsa', {
         modulusLength: 2048
     }, (err, publicKey, privateKey) => {
@@ -85,7 +79,6 @@ function testRSA() {
         console.log("SUCESS:", msg === dec);
     });
 }
-exports.testRSA = testRSA;
 const cert = {
     unpub: function (key) {
         let s = key;

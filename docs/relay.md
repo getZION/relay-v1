@@ -8,6 +8,13 @@ sudo -s
 docker exec -it $(docker ps --latest --quiet) bash
 ```
 
+## Docker
+
+```
+docker-compose --env-file .env up 
+docker-compose -f docker-compose-testnet.yml up -d
+```
+
 ## Reset 
 ```
 supervisorctl stop relay
@@ -38,4 +45,10 @@ scp -i ~/.ssh/n2n2 -r ubuntu@relay-0.n2n2.chat:/relay/.lnd .
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/testnet/admin.macaroon getinfo
 
 lncli --lnddir=/relay/.lnd/ --macaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon getinfo
+```
+
+## Tor
+
+```
+https://sachsenhofer.io/setup-tor-docker-container/
 ```

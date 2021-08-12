@@ -1,6 +1,6 @@
 import * as zbase32 from './zbase32'
 import { signBuffer } from './lightning'
-import { loadConfig } from './config'
+import {loadConfig} from './config'
 
 const config = loadConfig()
 
@@ -17,7 +17,7 @@ Base64 strings separated by dots:
 - signature of all that (concatenated bytes of each)
 */
 
-async function tokenFromTerms({ host, muid, ttl, pubkey, meta }) {
+async function tokenFromTerms({ host, muid, ttl, pubkey, meta, ownerPubkey }) {
     const theHost = host || config.media_host || ''
 
     const pubkeyBytes = Buffer.from(pubkey, 'hex')
@@ -28,7 +28,7 @@ async function tokenFromTerms({ host, muid, ttl, pubkey, meta }) {
 
     const ldat = startLDAT(theHost, muid, pubkey64, exp, meta)
     if (pubkey != '') {
-        const sig = await signBuffer(ldat.bytes)
+        const sig = await signBuffer(ldat.bytes, ownerPubkey)
         const sigBytes = zbase32.decode(sig)
         return ldat.terms + "." + urlBase64FromBytes(sigBytes)
     } else {
@@ -101,7 +101,8 @@ async function testLDAT() {
             amt: 100,
             ttl: 31536000,
             dim: '1500x1300'
-        }
+        },
+        ownerPubkey: '0373ca36a331d8fd847f190908715a34997b15dc3c5d560ca032cf3412fcf494e4'
     }
     const token = await tokenFromTerms(terms)
     console.log(token)
@@ -114,7 +115,8 @@ async function testLDAT() {
         meta: {
             amt: 100,
             ttl: 31536000,
-        }
+        },
+        ownerPubkey: ''
     }
     const token2 = await tokenFromTerms(terms2)
     console.log(token2)

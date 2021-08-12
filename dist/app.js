@@ -1,95 +1,86 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
-const bodyParser = require("body-parser");
-const helmet = require("helmet");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const logger_1 = require("./src/utils/logger");
-const hub_1 = require("./src/hub");
-const setup_1 = require("./src/utils/setup");
-const controllers = require("./src/controllers");
-const connect = require("./src/utils/connect");
-const socket = require("./src/utils/socket");
-const network = require("./src/network");
-const auth_1 = require("./src/auth");
-const grpc = require("./src/grpc");
-const cert = require("./src/utils/cert");
-const config_1 = require("./src/utils/config");
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import * as helmet from 'helmet';
+import * as cookieParser from 'cookie-parser';
+import * as cors from 'cors';
+import logger, { logging } from './src/utils/logger';
+import { pingHubInterval, checkInvitesHubInterval } from './src/hub';
+import { genUsersInterval } from './src/utils/proxy';
+import { setupDatabase, setupDone, setupOwnerContact } from './src/utils/setup';
+import * as controllers from './src/controllers';
+import * as connect from './src/utils/connect';
+import * as socket from './src/utils/socket';
+import * as network from './src/network';
+import { ownerMiddleware } from './src/auth';
+import * as grpc from './src/grpc';
+import { loadConfig } from './src/utils/config';
 const env = process.env.NODE_ENV || 'development';
-const config = config_1.loadConfig();
+const config = loadConfig();
 const port = process.env.PORT || config.node_http_port || 3001;
 console.log("=> env:", env);
 // console.log('=> config: ',config)
 process.env.GRPC_SSL_CIPHER_SUITES = 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384';
 process.env.NODE_EXTRA_CA_CERTS = config.tls_location;
 // START SETUP!
+async;
 function start() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield setup_1.setupDatabase();
-        mainSetup();
-        // // IF NOT UNLOCK, go ahead and start this now
-        if (config.hub_api_url && !config.unlock) {
-            hub_1.pingHubInterval(15000);
-        }
-    });
+    await;
+    setupDatabase();
+    mainSetup();
+    // // IF NOT UNLOCK, go ahead and start this now
+    if (config.hub_api_url && !config.unlock) {
+        pingHubInterval(15000);
+        genUsersInterval(15000);
+    }
 }
 start();
+async;
 function mainSetup() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield setupApp(); // setup routes
-        grpc.reconnectToLND(Math.random(), function () {
-            console.log(">> FINISH SETUP");
-            finishSetup();
-        }); // recursive
-    });
+    await;
+    setupApp(); // setup routes
+    grpc.reconnectToLND(Math.random(), function () {
+        console.log(">> FINISH SETUP");
+        finishSetup();
+    }); // recursive
 }
+async;
 function finishSetup() {
-    return __awaiter(this, void 0, void 0, function* () {
-        setup_1.setupOwnerContact();
-        yield network.initTribesSubscriptions();
-        if (config.hub_api_url) {
-            hub_1.checkInvitesHubInterval(5000);
-        }
-        if (config.unlock) { // IF UNLOCK, start this only after unlocked!
-            hub_1.pingHubInterval(15000);
-        }
-        setup_1.setupDone();
-    });
+    setupOwnerContact();
+    await;
+    network.initTribesSubscriptions();
+    if (config.hub_api_url) {
+        checkInvitesHubInterval(5000);
+    }
+    if (config.unlock) {
+        pingHubInterval(15000);
+    }
+    setupDone();
 }
 function setupApp() {
-    return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+    return new Promise(async, resolve => {
         const app = express();
         app.use(helmet());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(logger_1.default);
+        if (logging.Express) {
+            app.use(logger);
+        }
         app.use(cors({
             allowedHeaders: ['X-Requested-With', 'Content-Type', 'Accept', 'x-user-token']
         }));
         app.use(cookieParser());
-        if (env != 'development') {
-            app.use(auth_1.authModule);
-        }
+        app.use(ownerMiddleware);
         app.use('/static', express.static('public'));
         app.get('/app', (req, res) => res.send('INDEX'));
         if (config.connect_ui) {
             app.get('/connect', connect.connect);
+            app.post('/gen_channel', connect.genChannel);
         }
         let server;
         if ('ssl' in config && config.ssl.enabled) {
             try {
-                var certData = yield cert.getCertificate(config.public_url, config.ssl.port, config.ssl.save);
-                var credentials = { key: certData === null || certData === void 0 ? void 0 : certData.privateKey.toString(), ca: certData === null || certData === void 0 ? void 0 : certData.caBundle, cert: certData === null || certData === void 0 ? void 0 : certData.certificate };
+                var certData = await, cert, getCertificate = (config.public_url, config.ssl.port, config.ssl.save);
+                var credentials = { key: certData ? .privateKey.toString() : , ca: certData ? .caBundle : , cert: certData ? .certificate :  };
                 server = require("https").createServer(credentials, app);
             }
             catch (e) {
@@ -114,18 +105,16 @@ function setupApp() {
             resolve(true);
         }
         else {
-            app.post('/unlock', function (req, res) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    const ok = yield auth_1.unlocker(req, res);
-                    if (ok) {
-                        console.log('=> relay unlocked!');
-                        controllers.set(app);
-                        socket.connect(server);
-                        resolve(true);
-                    }
-                });
+            app.post('/unlock', async, function (req, res) {
+                const ok = await, unlocker = (req, res);
+                if (ok) {
+                    console.log('=> relay unlocked!');
+                    controllers.set(app);
+                    socket.connect(server);
+                    resolve(true);
+                }
             });
         }
-    }));
+    });
 }
 //# sourceMappingURL=app.js.map

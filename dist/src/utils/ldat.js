@@ -1,19 +1,6 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.urlBase64FromHex = exports.testLDAT = exports.urlBase64FromBytes = exports.urlBase64FromAscii = exports.urlBase64 = exports.tokenFromTerms = exports.parseLDAT = exports.startLDAT = void 0;
-const zbase32 = require("./zbase32");
-const lightning_1 = require("./lightning");
-const config_1 = require("./config");
-const config = config_1.loadConfig();
+import * as zbase32 from './zbase32';
+import { loadConfig } from './config';
+const config = loadConfig();
 /*
 Lightning Data Access Token
 Base64 strings separated by dots:
@@ -26,25 +13,23 @@ Base64 strings separated by dots:
 - meta: key/value pairs, url query encoded (alphabetically ordered, ascii->base64)
 - signature of all that (concatenated bytes of each)
 */
-function tokenFromTerms({ host, muid, ttl, pubkey, meta }) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const theHost = host || config.media_host || '';
-        const pubkeyBytes = Buffer.from(pubkey, 'hex');
-        const pubkey64 = urlBase64FromBytes(pubkeyBytes);
-        const now = Math.floor(Date.now() / 1000);
-        const exp = ttl ? now + (60 * 60 * 24 * 365) : 0;
-        const ldat = startLDAT(theHost, muid, pubkey64, exp, meta);
-        if (pubkey != '') {
-            const sig = yield lightning_1.signBuffer(ldat.bytes);
-            const sigBytes = zbase32.decode(sig);
-            return ldat.terms + "." + urlBase64FromBytes(sigBytes);
-        }
-        else {
-            return ldat.terms;
-        }
-    });
+async;
+function tokenFromTerms({ host, muid, ttl, pubkey, meta, ownerPubkey }) {
+    const theHost = host || config.media_host || '';
+    const pubkeyBytes = Buffer.from(pubkey, 'hex');
+    const pubkey64 = urlBase64FromBytes(pubkeyBytes);
+    const now = Math.floor(Date.now() / 1000);
+    const exp = ttl ? now + (60 * 60 * 24 * 365) : 0;
+    const ldat = startLDAT(theHost, muid, pubkey64, exp, meta);
+    if (pubkey != '') {
+        const sig = await, signBuffer = (ldat.bytes, ownerPubkey);
+        const sigBytes = zbase32.decode(sig);
+        return ldat.terms + "." + urlBase64FromBytes(sigBytes);
+    }
+    else {
+        return ldat.terms;
+    }
 }
-exports.tokenFromTerms = tokenFromTerms;
 // host.muid.pk.exp.meta
 function startLDAT(host, muid, pk, exp, meta = {}) {
     const empty = Buffer.from([]);
@@ -58,7 +43,6 @@ function startLDAT(host, muid, pk, exp, meta = {}) {
     let terms = `${urlBase64(hostBuf)}.${urlBase64(muidBuf)}.${urlBase64(pkBuf)}.${urlBase64(expBuf)}.${urlBase64(metaBuf)}`;
     return { terms, bytes: buf };
 }
-exports.startLDAT = startLDAT;
 const termKeys = [{
         key: 'host',
         func: buf => buf.toString('ascii')
@@ -90,39 +74,39 @@ function parseLDAT(ldat) {
     });
     return o;
 }
-exports.parseLDAT = parseLDAT;
+export { startLDAT, parseLDAT, tokenFromTerms, urlBase64, urlBase64FromAscii, urlBase64FromBytes, testLDAT, urlBase64FromHex };
+async;
 function testLDAT() {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log('testLDAT');
-        const terms = {
-            host: '',
+    console.log('testLDAT');
+    const terms = {
+        host: '',
+        ttl: 31536000,
+        muid: 'qFSOa50yWeGSG8oelsMvctLYdejPRD090dsypBSx_xg=',
+        pubkey: '0373ca36a331d8fd847f190908715a34997b15dc3c5d560ca032cf3412fcf494e4',
+        meta: {
+            amt: 100,
             ttl: 31536000,
-            muid: 'qFSOa50yWeGSG8oelsMvctLYdejPRD090dsypBSx_xg=',
-            pubkey: '0373ca36a331d8fd847f190908715a34997b15dc3c5d560ca032cf3412fcf494e4',
-            meta: {
-                amt: 100,
-                ttl: 31536000,
-                dim: '1500x1300'
-            }
-        };
-        const token = yield tokenFromTerms(terms);
-        console.log(token);
-        const terms2 = {
-            host: '',
-            ttl: 0,
-            muid: 'qFSOa50yWeGSG8oelsMvctLYdejPRD090dsypBSx_xg=',
-            pubkey: '',
-            meta: {
-                amt: 100,
-                ttl: 31536000,
-            }
-        };
-        const token2 = yield tokenFromTerms(terms2);
-        console.log(token2);
-        console.log(parseLDAT(token2));
-    });
+            dim: '1500x1300'
+        },
+        ownerPubkey: '0373ca36a331d8fd847f190908715a34997b15dc3c5d560ca032cf3412fcf494e4'
+    };
+    const token = await, tokenFromTerms = (terms);
+    console.log(token);
+    const terms2 = {
+        host: '',
+        ttl: 0,
+        muid: 'qFSOa50yWeGSG8oelsMvctLYdejPRD090dsypBSx_xg=',
+        pubkey: '',
+        meta: {
+            amt: 100,
+            ttl: 31536000,
+        },
+        ownerPubkey: ''
+    };
+    const token2 = await, tokenFromTerms = (terms2);
+    console.log(token2);
+    console.log(parseLDAT(token2));
 }
-exports.testLDAT = testLDAT;
 function serializeMeta(obj) {
     var str = [];
     for (var p in obj) {
@@ -145,17 +129,13 @@ function deserializeMeta(str) {
 function urlBase64(buf) {
     return buf.toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
 }
-exports.urlBase64 = urlBase64;
 function urlBase64FromBytes(buf) {
     return Buffer.from(buf).toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
 }
-exports.urlBase64FromBytes = urlBase64FromBytes;
 function urlBase64FromAscii(ascii) {
     return Buffer.from(ascii, 'ascii').toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
 }
-exports.urlBase64FromAscii = urlBase64FromAscii;
 function urlBase64FromHex(ascii) {
     return Buffer.from(ascii, 'hex').toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
 }
-exports.urlBase64FromHex = urlBase64FromHex;
 //# sourceMappingURL=ldat.js.map

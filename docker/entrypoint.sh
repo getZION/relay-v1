@@ -35,6 +35,11 @@ echo "Starting supervisor..."
 
 sleep 5
 
+echo "Starting tor..."
+supervisorctl start tor
+
+sleep 5
+
 if [[ -f "/relay/.lnd/.lndpwd" ]]; then
   echo "Wallet file found..."
 else

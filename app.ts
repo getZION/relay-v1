@@ -3,17 +3,18 @@ import * as bodyParser from 'body-parser'
 import * as helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
 import * as cors from 'cors'
-import logger from './src/utils/logger'
+import logger, {logging} from './src/utils/logger'
 import { pingHubInterval, checkInvitesHubInterval } from './src/hub'
+import { genUsersInterval } from './src/utils/proxy'
 import { setupDatabase, setupDone, setupOwnerContact } from './src/utils/setup'
 import * as controllers from './src/controllers'
 import * as connect from './src/utils/connect'
 import * as socket from './src/utils/socket'
 import * as network from './src/network'
-import { authModule, unlocker } from './src/auth'
+import { ownerMiddleware, unlocker } from './src/auth'
 import * as grpc from './src/grpc'
 import * as cert from './src/utils/cert'
-import { loadConfig } from './src/utils/config'
+import {loadConfig} from './src/utils/config'
 
 const env = process.env.NODE_ENV || 'development';
 const config = loadConfig()
@@ -28,15 +29,14 @@ process.env.NODE_EXTRA_CA_CERTS = config.tls_location;
 // START SETUP!
 async function start() {
 	await setupDatabase()
-	await mainSetup()
+	mainSetup()
 	// // IF NOT UNLOCK, go ahead and start this now
 	if (config.hub_api_url && !config.unlock) {
 		pingHubInterval(15000)
+		genUsersInterval(15000)
 	}
 }
-(async () => {
-	await start()
-})();
+start()
 
 async function mainSetup() {
 	await setupApp() // setup routes
@@ -66,19 +66,19 @@ function setupApp() {
 		app.use(helmet());
 		app.use(bodyParser.json());
 		app.use(bodyParser.urlencoded({ extended: true }));
-		app.use(logger)
+		if (logging.Express) {
+			app.use(logger)
+		}
 		app.use(cors({
 			allowedHeaders: ['X-Requested-With', 'Content-Type', 'Accept', 'x-user-token']
 		}))
 		app.use(cookieParser())
-		if (env != 'development') {
-			app.use(authModule);
-		}
+		app.use(ownerMiddleware);
 		app.use('/static', express.static('public'));
 		app.get('/app', (req, res) => res.send('INDEX'))
-		app.get('/', (req, res) => res.send('ok'))
 		if (config.connect_ui) {
 			app.get('/connect', connect.connect)
+			app.post('/gen_channel', connect.genChannel)
 		}
 
 		let server;

@@ -40,3 +40,12 @@ _/
 # ops.ansible
 
 secrets/
+
+admin.macaroon
+tls.cert
+lnd.tar.gz
+
+backups
+
+import.tar.gz
+export.tar.gz

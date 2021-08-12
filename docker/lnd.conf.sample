@@ -14,3 +14,8 @@ autopilot.active=false
 
 adminmacaroonpath=/relay/.lnd/data/chain/bitcoin/mainnet/admin.macaroon
 neutrino.feeurl=https://nodes.lightning.computer/fees/v1/btc-fee-estimates.json
+
+[tor]
+tor.active=true
+tor.v3=true
+tor.streamisolation=true

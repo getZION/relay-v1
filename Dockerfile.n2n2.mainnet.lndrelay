@@ -9,7 +9,8 @@ ENV GODEBUG netdns=cgo
 # image to be built from a specified Git state.  The default image
 # will use the Git tip of master by default.
 # ARG checkout="v0.11.1-beta"
-ARG checkout="v0.12.1-beta-branch"
+# ARG checkout="v0.12.1-beta-branch"
+ARG checkout="0-13-1-branch"
 # ARG checkout="master"
 
 # Install dependencies and build the binaries.
@@ -87,6 +88,7 @@ RUN mkdir -p /var/log/supervisor
 COPY ./docker/supervisord.conf /etc/supervisord.conf
 COPY ./docker/lnd_supervisor.conf /etc/supervisor.d/lnd_supervisor.ini
 COPY ./docker/relay_supervisor.conf /etc/supervisor.d/relay_supervisor.ini
+COPY ./docker/tor_supervisor.conf /etc/supervisor.d/tor_supervisor.ini
 COPY ./docker/aliases.sh /etc/profile.d/aliases.sh
 
 CMD touch ./sphinx.db

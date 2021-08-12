@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = require("crypto");
+import * as crypto from 'crypto';
 const password = crypto.randomBytes(16).toString('hex');
-exports.default = password;
+export default password;
 //# sourceMappingURL=password.js.map

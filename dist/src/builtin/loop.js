@@ -1,224 +1,217 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.init = void 0;
-const Sphinx = require("sphinx-bot");
-const api_1 = require("../controllers/api");
-const models_1 = require("../models");
-const constants_1 = require("../constants");
-const child_process_1 = require("child_process");
-const config_1 = require("../utils/config");
-const config = config_1.loadConfig();
-var validate = require('bitcoin-address-validation');
+import * as Sphinx from "sphinx-bot";
+import { finalAction } from "../controllers/api";
+import { models } from "../models";
+import constants from "../constants";
+import { spawn } from "child_process";
+import { loadConfig } from "../utils/config";
+const config = loadConfig();
+var validate = require("bitcoin-address-validation");
 const msg_types = Sphinx.MSG_TYPE;
 let initted = false;
 // const baseurl = 'https://localhost:8080'
-function init() {
+export function init() {
     if (initted)
         return;
     initted = true;
     const client = new Sphinx.Client();
-    client.login('_', api_1.finalAction);
-    client.on(msg_types.MESSAGE, (message) => __awaiter(this, void 0, void 0, function* () {
-        const arr = message.content.split(' ');
-        if (arr.length < 2)
+    client.login("_", finalAction);
+    client.on(msg_types.MESSAGE, async(message, Sphinx.Message), {
+        if() { } }, !message.content);
+    return;
+    const arr = message.content.split(" ");
+    if (arr.length < 2)
+        return;
+    if (arr[0] !== "/loopout")
+        return;
+    // check installed
+    const bot = await, getBot = (message.channel.id);
+    if (!bot)
+        return;
+    const messageAmount = Number(message.amount) || 0;
+    if (arr.length === 3) {
+        // loop
+        const addy = arr[1];
+        if (!validate(addy)) {
+            const embed = new Sphinx.MessageEmbed()
+                .setAuthor("LoopBot")
+                .setDescription("Invalid BTC address");
+            message.channel.send({ embed });
             return;
-        if (arr[0] !== '/loopout')
+        }
+        const amt = arr[2];
+        if (!validateAmount(amt)) {
+            const embed = new Sphinx.MessageEmbed()
+                .setAuthor("LoopBot")
+                .setDescription("Invalid amount");
+            message.channel.send({ embed });
             return;
-        const messageAmount = Number(message.amount) || 0;
-        if (arr.length === 3) { // loop
-            const addy = arr[1];
-            if (!validate(addy)) {
+        }
+        if (messageAmount < parseInt(amt)) {
+            const embed = new Sphinx.MessageEmbed()
+                .setAuthor("LoopBot")
+                .setDescription("Incorrect amount");
+            message.channel.send({ embed });
+            return;
+        }
+        // try {
+        //   const j = await doRequest(baseurl + '/v1/loop/out/quote/' + amt)
+        //   console.log("=> LOOP QUOTE RES", j)
+        //   if (!(j && j.swap_fee_sat && j.prepay_amt_sat)) {
+        //     return
+        //   }
+        //   let chan
+        //   const bot = await getBot(message.channel.id)
+        //   if (bot && bot.meta) chan = bot.meta
+        //   if (!chan) {
+        //     const embed = new Sphinx.MessageEmbed()
+        //       .setAuthor('LoopBot')
+        //       .setDescription('No channel set')
+        //     message.channel.send({ embed })
+        //     return
+        //   }
+        //   const j2 = await doRequest(baseurl + '/v1/loop/out', {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //       amt: amt,
+        //       dest: addy,
+        //       outgoing_chan_set: [chan],
+        //       max_swap_fee: j.swap_fee_sat,
+        //       max_prepay_amt: j.prepay_amt_sat
+        //     }),
+        //   })
+        //   console.log("=> LOOP RESPONSE", j2)
+        //   if (j2 && j2.error) {
+        //     const embed = new Sphinx.MessageEmbed()
+        //       .setAuthor('LoopBot')
+        //       .setDescription('Error: ' + j2.error)
+        //     message.channel.send({ embed })
+        //     return
+        //   }
+        //   // if (!(j2 && j2.server_message)) {
+        //   //   return
+        //   // }
+        //   const embed = new Sphinx.MessageEmbed()
+        //     .setAuthor('LoopBot')
+        //     .setTitle('Payment was sent!')
+        //     // .setDescription('Success!')
+        //   message.channel.send({ embed })
+        //   return
+        // } catch (e) {
+        //   console.log('LoopBot error', e)
+        // }
+        try {
+            let chan;
+            if (bot && bot.meta)
+                chan = bot.meta;
+            if (!chan) {
                 const embed = new Sphinx.MessageEmbed()
-                    .setAuthor('LoopBot')
-                    .setDescription('Invalid BTC address');
+                    .setAuthor("LoopBot")
+                    .setDescription("No channel set");
                 message.channel.send({ embed });
                 return;
             }
-            const amt = arr[2];
-            if (!validateAmount(amt)) {
-                const embed = new Sphinx.MessageEmbed()
-                    .setAuthor('LoopBot')
-                    .setDescription('Invalid amount');
-                message.channel.send({ embed });
-                return;
-            }
-            if (messageAmount < parseInt(amt)) {
-                const embed = new Sphinx.MessageEmbed()
-                    .setAuthor('LoopBot')
-                    .setDescription('Incorrect amount');
-                message.channel.send({ embed });
-                return;
-            }
-            // try {
-            //   const j = await doRequest(baseurl + '/v1/loop/out/quote/' + amt)
-            //   console.log("=> LOOP QUOTE RES", j)
-            //   if (!(j && j.swap_fee_sat && j.prepay_amt_sat)) {
-            //     return
-            //   }
-            //   let chan
-            //   const bot = await getBot(message.channel.id)
-            //   if (bot && bot.meta) chan = bot.meta
-            //   if (!chan) {
-            //     const embed = new Sphinx.MessageEmbed()
-            //       .setAuthor('LoopBot')
-            //       .setDescription('No channel set')
-            //     message.channel.send({ embed })
-            //     return
-            //   }
-            //   const j2 = await doRequest(baseurl + '/v1/loop/out', {
-            //     method: 'POST',
-            //     body: JSON.stringify({
-            //       amt: amt,
-            //       dest: addy,
-            //       outgoing_chan_set: [chan],
-            //       max_swap_fee: j.swap_fee_sat,
-            //       max_prepay_amt: j.prepay_amt_sat
-            //     }),
-            //   })
-            //   console.log("=> LOOP RESPONSE", j2)
-            //   if (j2 && j2.error) {
-            //     const embed = new Sphinx.MessageEmbed()
-            //       .setAuthor('LoopBot')
-            //       .setDescription('Error: ' + j2.error)
-            //     message.channel.send({ embed })
-            //     return
-            //   }
-            //   // if (!(j2 && j2.server_message)) {
-            //   //   return
-            //   // }
-            //   const embed = new Sphinx.MessageEmbed()
-            //     .setAuthor('LoopBot')
-            //     .setTitle('Payment was sent!')
-            //     // .setDescription('Success!')
-            //   message.channel.send({ embed })
-            //   return
-            // } catch (e) {
-            //   console.log('LoopBot error', e)
-            // }
-            try {
-                let chan;
-                const bot = yield getBot(message.channel.id);
-                if (bot && bot.meta)
-                    chan = bot.meta;
-                if (!chan) {
-                    const embed = new Sphinx.MessageEmbed()
-                        .setAuthor('LoopBot')
-                        .setDescription('No channel set');
-                    message.channel.send({ embed });
-                    return;
-                }
-                const cmd = `loop`;
-                const args = [
-                    `--tlscertpath=${config.tls_location}`,
-                    `--macaroonpath=${config.loop_macaroon_location}`,
-                    `--rpcserver=localhost:10009`,
-                    'out',
-                    `--channel=${chan}`,
-                    `--amt=${amt}`,
-                    `--fast`,
-                    `--addr=${addy}`
-                ];
-                console.log("=> SPAWN", cmd, args);
-                let childProcess = child_process_1.spawn(cmd, args);
-                childProcess.stdout.on('data', function (data) {
-                    const stdout = data.toString();
-                    console.log("LOOPBOT stdout:", stdout);
-                    if (stdout) {
-                        console.log('=> LOOPBOT stdout', stdout);
-                        if (stdout.includes('CONTINUE SWAP?')) {
-                            childProcess.stdin.write('y\n');
-                        }
-                        if (stdout.startsWith('Swap initiated')) {
-                            const embed = new Sphinx.MessageEmbed()
-                                .setAuthor('LoopBot')
-                                .setTitle('Payment was sent!');
-                            // .setDescription('Success!')
-                            message.channel.send({ embed });
-                            return;
-                        }
+            const cmd = `loop`;
+            const args = [
+                `--tlscertpath=${config.tls_location}`,
+                `--macaroonpath=${config.loop_macaroon_location}`,
+                `--rpcserver=localhost:10009`,
+                "out",
+                `--channel=${chan}`,
+                `--amt=${amt}`,
+                `--fast`,
+                `--addr=${addy}`,
+            ];
+            console.log("=> SPAWN", cmd, args);
+            let childProcess = spawn(cmd, args);
+            childProcess.stdout.on("data", function (data) {
+                const stdout = data.toString();
+                console.log("LOOPBOT stdout:", stdout);
+                if (stdout) {
+                    console.log("=> LOOPBOT stdout", stdout);
+                    if (stdout.includes("CONTINUE SWAP?")) {
+                        childProcess.stdin.write("y\n");
                     }
-                });
-                childProcess.stderr.on('data', function (data) {
-                    console.log("STDERR:", data.toString());
-                });
-                childProcess.on('error', (error) => {
-                    console.log("error", error.toString());
-                });
-                childProcess.on('close', (code) => {
-                    console.log("CHILD PROCESS closed", code);
-                });
-            }
-            catch (e) {
-                console.log('LoopBot error', e);
+                    if (stdout.startsWith("Swap initiated")) {
+                        const embed = new Sphinx.MessageEmbed()
+                            .setAuthor("LoopBot")
+                            .setTitle("Payment was sent!");
+                        // .setDescription('Success!')
+                        message.channel.send({ embed });
+                        return;
+                    }
+                }
+            });
+            childProcess.stderr.on("data", function (data) {
+                console.log("STDERR:", data.toString());
+            });
+            childProcess.on("error", (error) => {
+                console.log("error", error.toString());
+            });
+            childProcess.on("close", (code) => {
+                console.log("CHILD PROCESS closed", code);
+            });
+        }
+        catch (e) {
+            console.log("LoopBot error", e);
+        }
+    }
+    else {
+        const cmd = arr[1];
+        const isAdmin = message.member.roles.find((role) => role.name === "Admin");
+        if (isAdmin && cmd.startsWith("setchan=")) {
+            const bot = await, getBot = (message.channel.id);
+            const arr = cmd.split("=");
+            if (bot && arr.length > 1) {
+                const chan = arr[1];
+                await;
+                bot.update({ meta: chan });
+                const embed = new Sphinx.MessageEmbed()
+                    .setAuthor("LoopBot")
+                    .setDescription("Channel updated to " + chan)
+                    .setThumbnail(botSVG);
+                message.channel.send({ embed });
+                return;
             }
         }
-        else {
-            const cmd = arr[1];
-            const isAdmin = message.member.roles.find(role => role.name === 'Admin');
-            if (isAdmin && cmd.startsWith('setchan=')) {
-                const bot = yield getBot(message.channel.id);
-                const arr = cmd.split('=');
-                if (bot && arr.length > 1) {
-                    const chan = arr[1];
-                    yield bot.update({ meta: chan });
-                    const embed = new Sphinx.MessageEmbed()
-                        .setAuthor('LoopBot')
-                        .setDescription('Channel updated to ' + chan)
-                        .setThumbnail(botSVG);
-                    message.channel.send({ embed });
-                    return;
-                }
-            }
-            switch (cmd) {
-                case 'help':
-                    const embed = new Sphinx.MessageEmbed()
-                        .setAuthor('LoopBot')
-                        .setTitle('LoopBot Commands:')
-                        .addFields([
-                        { name: 'Send to your on-chain address', value: '/loopout {ADDRESS} {AMOUNT}' },
-                        { name: 'Set Channel', value: '/loopout setchan=***' },
-                        { name: 'Help', value: '/loopout help' },
-                    ])
-                        .setThumbnail(botSVG);
-                    message.channel.send({ embed });
-                    return;
-                default:
-                    const embed2 = new Sphinx.MessageEmbed()
-                        .setAuthor('LoopBot')
-                        .setDescription('Command not recognized');
-                    message.channel.send({ embed: embed2 });
-                    return;
-            }
-        } // end else
-    }));
+        switch (cmd) {
+            case "help":
+                const embed = new Sphinx.MessageEmbed()
+                    .setAuthor("LoopBot")
+                    .setTitle("LoopBot Commands:")
+                    .addFields([
+                    {
+                        name: "Send to your on-chain address",
+                        value: "/loopout {ADDRESS} {AMOUNT}",
+                    },
+                    { name: "Set Channel", value: "/loopout setchan=***" },
+                    { name: "Help", value: "/loopout help" },
+                ])
+                    .setThumbnail(botSVG);
+                message.channel.send({ embed });
+                return;
+            default:
+                const embed2 = new Sphinx.MessageEmbed()
+                    .setAuthor("LoopBot")
+                    .setDescription("Command not recognized");
+                message.channel.send({ embed: embed2 });
+                return;
+        }
+    } // end else
 }
-exports.init = init;
+;
+async;
 function getBot(tribeUUID) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const chat = yield models_1.models.Chat.findOne({
-            where: {
-                uuid: tribeUUID
-            }
-        });
-        if (!chat)
-            return;
-        const chatBot = yield models_1.models.ChatBot.findOne({
-            where: {
-                chatId: chat.id,
-                botPrefix: '/loopout',
-                botType: constants_1.default.bot_types.builtin
-            }
-        });
-        return chatBot;
+    const chat = await, getTribeOwnersChatByUUID = (tribeUUID);
+    if (!chat)
+        return;
+    return await;
+    models.ChatBot.findOne({
+        where: {
+            chatId: chat.id,
+            botPrefix: "/loopout",
+            botType: constants.bot_types.builtin,
+            tenant: chat.tenant,
+        },
     });
 }
 const botSVG = `<svg viewBox="64 64 896 896" height="12" width="12" fill="white">

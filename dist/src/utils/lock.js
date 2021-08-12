@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const AsyncLock = require("async-lock");
+import * as AsyncLock from 'async-lock';
 const lock = new AsyncLock();
-exports.default = lock;
+export default lock;
 //# sourceMappingURL=lock.js.map
