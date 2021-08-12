@@ -4,19 +4,24 @@ volumes:
 
 services:
   relay:
+    container_name: proxy
+
     build:
       context: .
       dockerfile: Dockerfile.n2n2.mainnet.lndrelay
+
     volumes:
       # - .:/relay
-      # - .lnd/:/relay/.lnd
+      - .lnd/:/relay/.lnd
       - node_modules:/relay/node_modules
+
     ports:
       - "3000:3000"
       - "9735:9735"
       - "10009:10009"
       - "8333:8333"
     command: "lnd --accept-keysend --configfile=/relay/.lnd/lnd.conf && npm start"
+
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -27,3 +32,6 @@ services:
       - MEDIA_HOST=$MEDIA_HOST
       - CONNECT_UI=$CONNECT_UI
       - MACAROON_LOCATION=$MACAROON_LOCATION
+
+    env_file:
+      - /etc/environment

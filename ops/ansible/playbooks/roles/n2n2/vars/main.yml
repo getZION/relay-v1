@@ -1,4 +1,4 @@
 ---
 n2n2_path: "/relay"
 # git_branch: "staging"
-git_branch: "feature/tenants"
+git_branch: "main"
