@@ -98,9 +98,9 @@
     line: "CONNECT_UI=true"
   become: yes
 
-- name: Mkdir n2n2 client path dir
+- name: Mkdir zion client path dir
   file:
-    path: "{{ n2n2_path }}"
+    path: "{{ zion_path }}"
     state: directory
     owner: ubuntu
   become: true
@@ -146,9 +146,9 @@
 
 - name: clone a private repository
   git: >
-    repo=git@github.com:n2n2dev/n2n2-relay.git
+    repo=git@github.com:getzion/relay.git
     key_file=/root/.ssh/id_rsa.github
-    dest={{ n2n2_path }}
+    dest={{ zion_path }}
     version={{ git_branch }}
     force=yes
     update=yes

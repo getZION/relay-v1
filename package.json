@@ -1,5 +1,5 @@
 {
-  "name": "n2n2-relay",
+  "name": "zion-relay",
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
@@ -19,7 +19,7 @@
     "start-ecs": "cp config/app.json dist/config/app.json && cp config/config.json dist/config/config.json && export NODE_ENV=production && node --max-old-space-size=128 dist/app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "masterial",
   "license": "ISC",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.3",

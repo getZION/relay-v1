@@ -1,4 +1,4 @@
-# Deploying n2n2-relay
+# Deploying zion-relay
 
 ## Stack DevOps/CI
 Stack is currently deployed to AWS via ansible.

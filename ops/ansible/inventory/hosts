@@ -1,4 +1,4 @@
 [local]
 localhost ansible_python_interpreter=python3
 
-[n2n2]
+[zion]

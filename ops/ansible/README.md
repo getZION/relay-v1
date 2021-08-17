@@ -1,4 +1,4 @@
-# N2N2 Relay Cluster
+# Zion Relay Cluster
 
 ## Prerequisites
 ```

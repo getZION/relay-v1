@@ -69,7 +69,7 @@
 
 - name: Add a host alias that we reach through a tunnel (Ansible >= 2.0)
   add_host:
-    # name: "n2n2-node"
+    # name: "zion-node"
     name: "{{ config.instance_name }}.n2n2.chat"
     hostname: "n2n2"
     groups: relays

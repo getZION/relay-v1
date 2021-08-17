@@ -23,4 +23,4 @@
   gather_facts: yes
 
   roles:
-    - n2n2
+    - zion
