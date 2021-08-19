@@ -8,7 +8,7 @@ services:
 
     build:
       context: .
-      dockerfile: Dockerfile.n2n2.mainnet.lndrelay
+      dockerfile: Dockerfile.zion.mainnet.lndrelay
 
     volumes:
       # - .:/relay

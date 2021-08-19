@@ -45,9 +45,9 @@ RUN git clone https://github.com/getzion/relay /relay/
 
 WORKDIR /relay/
 
-ARG n2n2_checkout="main"
+ARG zion_checkout="main"
 
-RUN git checkout $n2n2_checkout
+RUN git checkout $zion_checkout
 
 RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python jq git curl libmcrypt-dev
 
@@ -72,7 +72,7 @@ COPY ./docker/lnd.conf.sample /relay/.lnd/lnd.conf
 #Uncomment if you have a copy of the channel.db you want to use.
 #COPY ./channel.db /relay/.lnd/data/graph/mainnet/
 
-RUN git clone https://github.com/n2n2dev/sphinx-keysend-test /sphinx-keysend/
+RUN git clone https://github.com/getzion/sphinx-keysend-test /sphinx-keysend/
 WORKDIR /sphinx-keysend/
 
 ARG sphinx_keysend_checkout="binary"

@@ -56,5 +56,5 @@ resource "aws_codepipeline" "fetch" {
 
 # s3 default codepipeline bucket
 data "aws_s3_bucket" "default_codepipeline" {
-  bucket = "codepipeline-n2n2"
+  bucket = "codepipeline-zion"
 }

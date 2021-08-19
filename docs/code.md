@@ -7,7 +7,7 @@ cat /relay/connection_string.txt
 aXA6Omh0dHA6Ly8ubjJuMi1yZWxheS0xLm4ybjIuY2hhdDo6NDJkMTg0MWYyMDE0MTNmN2RjNjczNjNkYmNkODhlMTY=
 
 base: 64
-ip::http://.n2n2-relay-1.n2n2.chat::42d1841f201413f7dc67363dbcd88e16
+ip::http://.zion-relay-1.getzion.com::42d1841f201413f7dc67363dbcd88e16
 
 ```
 

@@ -1,13 +1,13 @@
 locals {
-  org  = "n2n2"
+  org  = "getzion"
   name = "relay-docker"
   env  = ["stag"]
   # env    = ["stag", "prod"]
   region = "us-east-1"
 
   git_conn_arn = "arn:aws:codestar-connections:us-east-1:533620758524:connection/803285fa-ac22-4ded-87d2-d58fbcb41685"
-  git_org      = "n2n2dev"
-  git_repo     = format("%s/%s", local.git_org, "n2n2-relay")
+  git_org      = "getzion"
+  git_repo     = format("%s/%s", local.git_org, "relay")
   git_branch = {
     # prod = "main"
     stag = "staging"
@@ -22,10 +22,10 @@ locals {
 terraform {
   # terraform state storage
   backend "s3" {
-    bucket         = "n2n2-terra-state"
-    key            = "apps/n2n2-relay-docker/terraform.tfstate"
+    bucket         = "zion-terra-state"
+    key            = "apps/zion-relay-docker/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "n2n2-terra-state"
+    dynamodb_table = "zion-terra-state"
   }
 
   required_providers {

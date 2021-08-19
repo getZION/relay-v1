@@ -16,7 +16,7 @@ export async function joinTribe(req, res) {
   if (!req.owner) return failure(res, "no owner");
   const tenant: number = req.owner.id;
 
-  if(logging.Express) console.log("=> joinTribe");
+  if (logging.Express) console.log("=> joinTribe");
   const {
     uuid,
     group_key,
@@ -30,7 +30,7 @@ export async function joinTribe(req, res) {
     my_alias,
     my_photo_url,
   } = req.body;
-  if(logging.Express) console.log("received owner route hint", owner_route_hint);
+  if (logging.Express) console.log("received owner route hint", owner_route_hint);
   const is_private = req.body.private;
 
   const existing = await models.Chat.findOne({ where: { uuid, tenant } });
@@ -217,7 +217,7 @@ export async function receiveMemberRequest(payload) {
       lastAlias: senderAlias,
       tenant,
     });
-  } catch (e) {}
+  } catch (e) { }
 
   const msg: { [k: string]: any } = {
     chatId: chat.id,
@@ -262,6 +262,7 @@ export async function editTribe(req, res) {
     escrow_amount,
     escrow_millis,
     img,
+    host,
     description,
     tags,
     unlisted,
@@ -285,7 +286,7 @@ export async function editTribe(req, res) {
       await tribes.edit({
         uuid: chat.uuid,
         name: name,
-        host: chat.host,
+        host: host || chat.host,
         price_per_message: price_per_message || 0,
         price_to_join: price_to_join || 0,
         escrow_amount: escrow_amount || 0,
@@ -552,7 +553,7 @@ export async function receiveTribeDelete(payload) {
 export async function replayChatHistory(chat, contact, ownerRecord) {
   const owner = ownerRecord.dataValues || ownerRecord;
   const tenant: number = owner.id;
-  if(logging.Tribes) console.log("-> replayHistory");
+  if (logging.Tribes) console.log("-> replayHistory");
   if (!(chat && chat.id && contact && contact.id)) {
     return console.log("[tribes] cant replay history");
   }
@@ -585,7 +586,7 @@ export async function replayChatHistory(chat, contact, ownerRecord) {
       let content = "";
       try {
         content = JSON.parse(m.remoteMessageContent);
-      } catch (e) {}
+      } catch (e) { }
 
       let mdate = m.date;
       if (!mdate) mdate = new Date();

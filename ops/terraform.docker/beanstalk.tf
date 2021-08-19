@@ -57,7 +57,7 @@ resource "aws_elastic_beanstalk_environment" "fetch" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "EC2KeyName"
-    value     = "n2n2"
+    value     = "zion"
   }
   setting {
     namespace = "aws:autoscaling:launchconfiguration"

@@ -2,7 +2,7 @@
 
 ### Bash
 ```
-ssh -i ~/.ssh/n2n2 ubuntu@box-1.n2n2.chat
+ssh -i ~/.ssh/zion ubuntu@box-1.n2n2.chat
 sudo -s
 docker exec -it $(docker ps --latest --quiet) bash
 ```
@@ -34,7 +34,7 @@ cat /relay/connection_string.txt
 
 ## Backup
 ```
-scp -i ~/.ssh/n2n2 -r ubuntu@box-1.n2n2.chat:/relay/.lnd .
+scp -i ~/.ssh/zion -r ubuntu@box-1.n2n2.chat:/relay/.lnd .
 
 ```
 

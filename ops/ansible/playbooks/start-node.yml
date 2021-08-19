@@ -76,7 +76,7 @@
     ansible_host: "{{ instance_eip.public_ip }}"
     ansible_connection: "ssh"
     ansible_user: "ubuntu"
-    ansible_ssh_private_key_file: "~/.ssh/n2n2"
+    ansible_ssh_private_key_file: "~/.ssh/zion"
     ansible_python_interpreter: "/usr/bin/python3"
     ec2: "{{ ec2 }}"
     public_ip: "{{ instance_eip.public_ip }}"
