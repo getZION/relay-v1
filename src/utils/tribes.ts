@@ -344,7 +344,7 @@ export async function edit({
     let protocol = "https";
     if (config.tribes_insecure) protocol = "http";
 
-    let url = `${protocol} + "://" + ${host} + "/tribe?token=" + ${token}`;
+    let url = `${protocol}://${host}/tribe?token=${token}`;
 
     console.log("url: ", url);
 
