@@ -322,6 +322,7 @@ export async function editTribe(req, res) {
     if (feed_url) obj.feedUrl = feed_url;
     if (req.body.private || req.body.private === false)
       obj.private = req.body.private;
+    if (host) obj.host = host;
     if (Object.keys(obj).length > 0) {
       await chat.update(obj);
     }

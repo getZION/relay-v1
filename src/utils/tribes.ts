@@ -343,7 +343,12 @@ export async function edit({
     const token = await genSignedTimestamp(owner_pubkey);
     let protocol = "https";
     if (config.tribes_insecure) protocol = "http";
-    await fetch(protocol + "://" + host + "/tribe?token=" + token, {
+
+    let url = `${protocol} + "://" + ${host} + "/tribe?token=" + ${token}`;
+
+    console.log("url: ", url);
+
+    await fetch(url, {
       method: "PUT",
       body: JSON.stringify({
         uuid,
