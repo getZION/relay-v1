@@ -8,14 +8,6 @@ To start see [Ansible](../ops.ansible/README.md)
 
 ## Deprecated Flows
 
-### Terrafom Node
-```
-cd terraform/
-terraform apply
-terraform show
-terraform destruct
-```
-
 ### Terraform Docker
 ```
 cd terraform.docker/

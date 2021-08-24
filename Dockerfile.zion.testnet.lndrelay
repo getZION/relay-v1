@@ -1,5 +1,5 @@
 FROM golang:1.13-alpine as builder
-LABEL maintainer="stan@n2n2.co"
+LABEL maintainer="masterial@protonmail.com"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
