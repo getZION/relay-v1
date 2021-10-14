@@ -135,7 +135,8 @@ async function finalNotification(
     where,
   });
 
-  console.log("[send notification]", unseenMessages);
+  if (logging.Notification)
+    console.log("[send notification]", unseenMessages);
 
   if (!unseenMessages) return
   params.notification.badge = unseenMessages;
@@ -169,6 +170,6 @@ function debounce(func, id, delay) {
   }, delay);
 }
 
-export function resetNotifyTribeCount(chatID:number) {
+export function resetNotifyTribeCount(chatID: number) {
   tribeCounts[chatID] = 0
 }

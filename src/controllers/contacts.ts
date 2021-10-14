@@ -10,7 +10,7 @@ import constants from "../constants";
 import * as tribes from "../utils/tribes";
 import * as network from "../network";
 import { isProxy } from "../utils/proxy";
-import {logging} from '../utils/logger'
+import { logging } from '../utils/logger'
 
 export const getContacts = async (req, res) => {
   if (!req.owner) return failure(res, "no owner");
@@ -186,7 +186,7 @@ export const generateToken = async (req, res) => {
 export const updateContact = async (req, res) => {
   if (!req.owner) return failure(res, "no owner");
   const tenant: number = req.owner.id;
-  if(logging.Network) {
+  if (logging.Network) {
     console.log("=> updateContact called", {
       body: req.body,
       params: req.params,
@@ -263,8 +263,10 @@ export const exchangeKeys = async (req, res) => {
 
 export const createContact = async (req, res) => {
   if (!req.owner) return failure(res, "no owner");
+
   const tenant: number = req.owner.id;
-  if(logging.Network) {
+
+  if (logging.Network) {
     console.log("=> createContact called", {
       body: req.body,
       params: req.params,
@@ -276,11 +278,10 @@ export const createContact = async (req, res) => {
 
   const owner = req.owner;
 
-  const existing =
-    attrs["public_key"] &&
-    (await models.Contact.findOne({
-      where: { publicKey: attrs["public_key"], tenant },
-    }));
+  const existing = attrs["public_key"] && (await models.Contact.findOne({
+    where: { publicKey: attrs["public_key"], tenant },
+  }));
+
   if (existing) {
     const updateObj: { [k: string]: any } = { fromGroup: false };
     if (attrs["alias"]) updateObj.alias = attrs["alias"];
@@ -288,8 +289,10 @@ export const createContact = async (req, res) => {
     return success(res, jsonUtils.contactToJson(existing));
   }
 
-  if (attrs["public_key"].length > 66)
+  if (attrs["public_key"].length > 66) {
     attrs["public_key"] = attrs["public_key"].substring(0, 66);
+  }
+
   attrs.tenant = tenant;
   const createdContact = await models.Contact.create(attrs);
   const contact = await createdContact.update(jsonUtils.jsonToContact(attrs));
@@ -376,7 +379,7 @@ export const deleteContact = async (req, res) => {
   await models.Invite.destroy({ where: { contactId: id, tenant } });
   await models.Subscription.destroy({ where: { contactId: id, tenant } });
 
-  success(res, {});
+  success(res, { });
 };
 
 export const receiveContactKey = async (payload) => {
@@ -389,7 +392,7 @@ export const receiveContactKey = async (payload) => {
   const owner = payload.owner;
   const tenant: number = owner.id;
 
-  if(logging.Network) console.log("=> received contact key from", sender_pub_key, tenant);
+  if (logging.Network) console.log("=> received contact key from", sender_pub_key, tenant);
 
   if (!sender_pub_key) {
     return console.log("no pubkey!");
@@ -407,7 +410,7 @@ export const receiveContactKey = async (payload) => {
     msgIncludedContactKey = true;
   }
   if (sender) {
-    const objToUpdate: { [k: string]: any } = {};
+    const objToUpdate: { [k: string]: any } = { };
     if (sender_contact_key) objToUpdate.contactKey = sender_contact_key;
     if (sender_alias) objToUpdate.alias = sender_alias;
     if (sender_photo_url) objToUpdate.photoUrl = sender_photo_url;
@@ -495,7 +498,7 @@ function extractAttrs(body): { [k: string]: any } {
     "tip_amount",
     "route_hint",
   ];
-  let attrs = {};
+  let attrs = { };
   Object.keys(body).forEach((key) => {
     if (fields_to_update.includes(key)) {
       attrs[key] = body[key];
