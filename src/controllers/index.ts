@@ -66,6 +66,8 @@ export async function set(app) {
   app.get("/msgs", messages.getMsgs);
   app.get("/allmessages", messages.getAllMessages);
   app.get("/messages", messages.getMessages);
+  app.get("/allmessagesoftype", messages.getAllMessagesOfType);
+  app.get("/messagesoftype", messages.getMessagesOfType);
   app.delete("/message/:id", messages.deleteMessage);
   app.post("/messages", messages.sendMessage);
   app.post("/messages/:chat_id/read", messages.readMessages);
