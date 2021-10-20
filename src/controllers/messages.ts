@@ -147,6 +147,92 @@ export const getAllMessages = async (req, res) => {
   });
 };
 
+export const getMessagesOfType = async (req, res) => {
+  if (!req.owner) return failure(res, "no owner");
+  const tenant: number = req.owner.id;
+
+  const dateToReturn = req.query.date;
+
+  if (!dateToReturn) {
+    return getAllMessagesOfType(req, res);
+  }
+
+  if (logging.Express) console.log(dateToReturn);
+
+  const owner = req.owner;
+  const type = (req.query.type && parseInt(req.query.type)) || constants.message_types.attachment;
+
+  let newMessagesWhere = {
+    date: { [Op.gte]: dateToReturn },
+    [Op.or]: [{ receiver: owner.id }, { receiver: null }],
+    tenant,
+    type,
+  };
+
+  let confirmedMessagesWhere = {
+    updated_at: { [Op.gte]: dateToReturn },
+    status: {
+      [Op.or]: [constants.statuses.received],
+    },
+    sender: owner.id,
+    tenant,
+    type,
+  };
+
+  let deletedMessagesWhere = {
+    updated_at: { [Op.gte]: dateToReturn },
+    status: {
+      [Op.or]: [constants.statuses.deleted],
+    },
+    tenant,
+    type,
+  };
+
+  const newMessages = await models.Message.findAll({ where: newMessagesWhere });
+  const confirmedMessages = await models.Message.findAll({
+    where: confirmedMessagesWhere,
+  });
+  const deletedMessages = await models.Message.findAll({
+    where: deletedMessagesWhere,
+  });
+
+  const chatIds: number[] = [];
+  newMessages.forEach((m) => {
+    if (!chatIds.includes(m.chatId)) chatIds.push(m.chatId);
+  });
+  confirmedMessages.forEach((m) => {
+    if (!chatIds.includes(m.chatId)) chatIds.push(m.chatId);
+  });
+  deletedMessages.forEach((m) => {
+    if (!chatIds.includes(m.chatId)) chatIds.push(m.chatId);
+  });
+
+  let chats =
+    chatIds.length > 0
+      ? await models.Chat.findAll({
+          where: { deleted: false, id: chatIds, tenant },
+        })
+      : [];
+  const chatsById = indexBy(chats, "id");
+
+  res.json({
+    success: true,
+    response: {
+      new_messages: newMessages.map((message) =>
+        jsonUtils.messageToJson(message, chatsById[parseInt(message.chatId)])
+      ),
+      confirmed_messages: confirmedMessages.map((message) =>
+        jsonUtils.messageToJson(message, chatsById[parseInt(message.chatId)])
+      ),
+      deleted_messages: deletedMessages.map((message) =>
+        jsonUtils.messageToJson(message, chatsById[parseInt(message.chatId)])
+      ),
+    },
+  });
+  res.status(200);
+  res.end();
+};
+
 export const getAllMessagesOfType = async (req, res) => {
   if (!req.owner) return failure(res, "no owner");
   const tenant: number = req.owner.id;
@@ -184,9 +270,7 @@ export const getAllMessagesOfType = async (req, res) => {
           where: { deleted: false, id: chatIds, tenant },
         })
       : [];
-  // console.log("=> found all chats", chats && chats.length);
   const chatsById = indexBy(chats, "id");
-  // console.log("=> indexed chats");
   success(res, {
     new_messages: messages.map((message) =>
       jsonUtils.messageToJson(message, chatsById[parseInt(message.chatId)])
