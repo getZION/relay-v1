@@ -13,6 +13,64 @@ import * as short from "short-uuid";
 import constants from "../constants";
 import { logging } from "../utils/logger";
 
+export const getMessagesForChat = async (req, res) => {
+  if (!req.owner) return failure(res, "no owner");
+  const chatId = req.query.chatId && parseInt(req.query.chatId)
+  const contactId = req.query.contactId && parseInt(req.query.contactId)
+
+  if (!chatId && !contactId) return failure(res, "need chatId or contactId");
+  if (chatId && contactId) return failure(res, "can't provide both chatId and contactId");
+
+  const tenant: number = req.owner.id;
+  const limit = req.query.limit && parseInt(req.query.limit);
+  const offset = req.query.offset && parseInt(req.query.offset);
+
+  let clause: { [k: string]: any } = {}
+  if (chatId) {
+    clause = {
+      order: [["id", "asc"]],
+      where: {
+        tenant,
+        chatId
+      },
+    };
+  } else {
+    clause = {
+      order: [["id", "asc"]],
+      where: {
+        tenant,
+        [Op.or]: [{ sender: contactId }, { receiver: contactId }],
+      },
+    };
+  }
+
+  if (limit) {
+    clause.limit = limit;
+    clause.offset = offset;
+  }
+  const messages = await models.Message.findAll(clause);
+
+  const chatIds: number[] = [];
+  messages.forEach((m) => {
+    if (m.chatId && !chatIds.includes(m.chatId)) {
+      chatIds.push(m.chatId);
+    }
+  });
+
+  let chats =
+    chatIds.length > 0
+      ? await models.Chat.findAll({
+          where: { deleted: false, id: chatIds, tenant },
+        })
+      : [];
+  const chatsById = indexBy(chats, "id");
+  success(res, {
+    new_messages: messages.map((message) =>
+      jsonUtils.messageToJson(message, chatsById[parseInt(message.chatId)])
+    ),
+  });
+}
+
 export const getMessages = async (req, res) => {
   if (!req.owner) return failure(res, "no owner");
   const tenant: number = req.owner.id;
