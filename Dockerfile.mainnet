@@ -10,7 +10,7 @@ ENV GODEBUG netdns=cgo
 # will use the Git tip of master by default.
 # ARG checkout="v0.11.1-beta"
 # ARG checkout="v0.12.1-beta-branch"
-ARG checkout="0-13-1-branch"
+ARG checkout="0-13-4-branch"
 # ARG checkout="master"
 
 # Install dependencies and build the binaries.
@@ -59,7 +59,9 @@ RUN apk --no-cache add bash ca-certificates
 COPY --from=builder /go/bin/lncli /bin/
 COPY --from=builder /go/bin/lnd /bin/
 
-RUN apk add --no-cache --update nodejs=12.22.6-r0 nodejs-npm=12.22.6-r0 sqlite=3.30.1-r2 git supervisor
+# RUN apk add --no-cache --update nodejs=12.22.6-r0 nodejs-npm=12.22.6-r0 sqlite=3.30.1-r2 git supervisor
+
+RUN apk add --update nodejs npm sqlite git supervisor
 
 RUN git clone https://github.com/getzion/relay /relay/
 
@@ -75,13 +77,15 @@ RUN apk --no-cache add vim
 
 USER root
 
+# ARG NODE_WEBKIT_VERSION="0.42.0"
+ARG NODE_WEBKIT_VERSION="0.58.0"
 RUN rm -rf node_modules/
 RUN npm install
 RUN npm install --quiet node-gyp@3.8.0 -g
 RUN npm -g config set user root
 RUN npm install nw-gyp -g
 RUN npm uninstall sqlite3
-RUN npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.42.0
+RUN npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=$NODE_WEBKIT_VERSION
 RUN npm rebuild
 RUN npm run tsc
 
