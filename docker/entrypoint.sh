@@ -24,6 +24,8 @@ else
   export NODE_IP=$NODE_SCHEME://$NODE_DOMAIN:$PORT
 fi
 
+echo $NODE_IP
+
 if [[ ! -f "/var/run/docker.sock" ]]; then
   echo "Docker socket found, pulling LND port..."
   export NODE_LND_PORT=$(curl --unix-socket /var/run/docker.sock http://localhost/containers/$HOSTNAME/json | jq -r '.NetworkSettings.Ports."9735/tcp"[0].HostPort')
