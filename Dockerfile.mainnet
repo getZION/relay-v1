@@ -1,4 +1,5 @@
-FROM golang:1.13-alpine as builder
+# FROM golang:1.13-alpine as builder
+FROM golang:1.17-alpine as builder
 LABEL maintainer="masterial@protonmail.com"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
@@ -10,8 +11,8 @@ ENV GODEBUG netdns=cgo
 # will use the Git tip of master by default.
 # ARG checkout="v0.11.1-beta"
 # ARG checkout="v0.12.1-beta-branch"
-ARG checkout="0-13-4-branch"
-# ARG checkout="master"
+# ARG checkout="0-13-1-branch"
+ARG checkout="master"
 
 # Install dependencies and build the binaries.
 RUN apk add --no-cache --update alpine-sdk git make gcc openssh-client
@@ -23,7 +24,7 @@ RUN cd /go/src/github.com/lightningnetwork/lnd \
     &&  make install tags="signrpc walletrpc chainrpc invoicesrpc experimental"
 
 # Start a new, final image.
-FROM alpine:3.11 as final
+FROM node:12-alpine as final
 
 RUN apk update && apk add \
     tor \
@@ -71,7 +72,7 @@ ARG zion_checkout="main"
 
 RUN git checkout $zion_checkout
 
-RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python jq git curl libmcrypt-dev
+RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make jq git curl python2 libmcrypt-dev
 
 RUN apk --no-cache add vim
 
