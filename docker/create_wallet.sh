@@ -45,7 +45,7 @@ send -- "$WALLET_PASSWORD\r"
 expect -exact "\r
 \r
 Do you have an existing cipher seed mnemonic or extended master root key you want to use?\r
-Enter 'y' to use an existing cipher seed mnemonic, 'x' to use an extended master root key 
+Enter 'y' to use an existing cipher seed mnemonic, 'x' to use an extended master root key \r
 or 'n' to create a new seed (Enter y/x/n): "
 send -- "n\r"
 expect -exact "n\r
