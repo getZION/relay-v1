@@ -4,8 +4,8 @@ import * as publicIp from 'public-ip'
 import { checkTag, checkCommitHash } from '../utils/gitinfo'
 import { models } from '../models'
 
-export function proxynodeinfo(pk:string):Promise<Object> {
-  return new Promise(async (resolve, reject)=> {
+export function proxynodeinfo(pk: string): Promise<Object> {
+  return new Promise(async (resolve, reject) => {
     const lightning = await LND.loadLightning(true, pk) // dont try proxy
     lightning.listChannels({}, (err, channelList) => {
       if (err) console.log(err)
@@ -39,7 +39,7 @@ export function nodeinfo() {
     try {
       const tryProxy = false
       const info = await LND.getInfo(tryProxy)
-      if(info.identity_pubkey) owner_pubkey=info.identity_pubkey
+      if (info.identity_pubkey) owner_pubkey = info.identity_pubkey
     } catch (e) { // no LND
       let owner
       try {
@@ -123,7 +123,7 @@ export function nodeinfo() {
                 lnd_version: info.version,
                 relay_version: tag,
                 payment_channel: '', // ?
-                hosting_provider: '', // ?
+                hosting_provider: process.env.HOSTING_PROVIDER || '', // ?
                 open_channel_data: channels,
                 pending_channel_data: pendingChannels,
                 synced_to_chain: info.synced_to_chain,
@@ -149,7 +149,7 @@ export function nodeinfo() {
 
 export async function isClean() {
   // has owner but with no auth token (id=1?)
-  const cleanOwner = await models.Contact.findOne({ where: { id:1, isOwner: true, authToken: null } })
+  const cleanOwner = await models.Contact.findOne({ where: { id: 1, isOwner: true, authToken: null } })
   const msgs = await models.Message.count()
   const allContacts = await models.Contact.count()
   const noMsgs = msgs === 0
@@ -177,8 +177,8 @@ interface Policy {
   fee_base_msat: number
   disabled: boolean
 }
-const policies = ['node1_policy','node2_policy']
-async function listNonZeroPolicies(){
+const policies = ['node1_policy', 'node2_policy']
+async function listNonZeroPolicies() {
   const ret: Policy[] = []
 
   const lightning = await LND.loadLightning(false) // dont try proxy
@@ -188,33 +188,33 @@ async function listNonZeroPolicies(){
     if (!channelList.channels) return ret
     const { channels } = channelList
 
-    await asyncForEach(channels, async chan=>{
+    await asyncForEach(channels, async chan => {
       try {
         const tryProxy = false
         const info = await LND.getChanInfo(chan.chan_id, tryProxy)
-        if(!info) return
-        policies.forEach(p=>{
-          if(info[p]) {
+        if (!info) return
+        policies.forEach(p => {
+          if (info[p]) {
             const fee_base_msat = parseInt(info[p].fee_base_msat)
             const disabled = info[p].disabled
-            if(fee_base_msat>0 || disabled) {
+            if (fee_base_msat > 0 || disabled) {
               ret.push({
-                node:p, 
-                fee_base_msat, 
-                chan_id:chan.chan_id, 
+                node: p,
+                fee_base_msat,
+                chan_id: chan.chan_id,
                 disabled
               })
             }
           }
         })
-      } catch(e){}
+      } catch (e) { }
     })
     return ret
   })
 }
 
 async function asyncForEach(array, callback) {
-	for (let index = 0; index < array.length; index++) {
-		await callback(array[index], index, array);
-	}
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
 }
