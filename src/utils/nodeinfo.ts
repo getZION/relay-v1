@@ -123,7 +123,7 @@ export function nodeinfo() {
                 lnd_version: info.version,
                 relay_version: tag,
                 payment_channel: '', // ?
-                hosting_provider: process.env.HOSTING_PROVIDER || '', // ?
+                hosting_provider: '', // ?
                 open_channel_data: channels,
                 pending_channel_data: pendingChannels,
                 synced_to_chain: info.synced_to_chain,
