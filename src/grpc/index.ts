@@ -19,7 +19,7 @@ export function subscribeInvoices(parseKeysendInvoice) {
 
 		var call = lightning.subscribeInvoices()
 		call.on('data', async function (response) {
-			console.log("AN INVOICE WAS RECIEVED!!!=======================>",response)
+			console.log("AN INVOICE WAS RECIEVED!!!=======================>", response)
 			if (response['state'] !== 'SETTLED') {
 				return
 			}
@@ -42,12 +42,12 @@ export function subscribeInvoices(parseKeysendInvoice) {
 
 				const invoice = await models.Message.findOne({ where: { type: constants.message_types.invoice, payment_request: response['payment_request'] } })
 				if (invoice == null) {
-					const invoice:any = await decodePayReq(response['payment_request'])
-					if(!invoice) return console.log("subscribeInvoices: couldn't decode pay req")
-					if(!invoice.destination) return console.log("subscribeInvoices: cant get dest from pay req")
-					const owner = await models.Contact.findOne({ where: { isOwner:true, publicKey:invoice.destination } })
-					if(!owner) return console.log('subscribeInvoices: no owner found')
-					const tenant:number = owner.id
+					const invoice: any = await decodePayReq(response['payment_request'])
+					if (!invoice) return console.log("subscribeInvoices: couldn't decode pay req")
+					if (!invoice.destination) return console.log("subscribeInvoices: cant get dest from pay req")
+					const owner = await models.Contact.findOne({ where: { isOwner: true, publicKey: invoice.destination } })
+					if (!owner) return console.log('subscribeInvoices: no owner found')
+					const tenant: number = owner.id
 					const payReq = response['payment_request']
 					const amount = response['amt_paid_sat']
 					if (process.env.HOSTING_PROVIDER === 'true') {
@@ -75,8 +75,8 @@ export function subscribeInvoices(parseKeysendInvoice) {
 					return
 				}
 				// invoice is defined
-				const tenant:number = invoice.tenant
-				const owner = await models.Contact.findOne({where:{id:tenant}})
+				const tenant: number = invoice.tenant
+				const owner = await models.Contact.findOne({ where: { id: tenant } })
 				models.Message.update({ status: constants.statuses.confirmed }, { where: { id: invoice.id } })
 
 				const chat = await models.Chat.findOne({ where: { id: invoice.chatId, tenant } })
@@ -142,8 +142,8 @@ export function subscribeInvoices(parseKeysendInvoice) {
 	})
 }
 
-function waitAndReconnect(){
-	setTimeout(()=> reconnectToLND(Math.random()), 2000)
+function waitAndReconnect() {
+	setTimeout(() => reconnectToLND(Math.random()), 2000)
 }
 
 var i = 0
@@ -159,7 +159,7 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 		console.log(`=> [lnd] connected! ${now}`)
 		if (callback) callback()
 	} catch (e) {
-		if (e.code === ERR_CODE_UNIMPLEMENTED) {
+		if (e.details === 'wallet locked, unlock it to enable full RPC access') {
 			await tryToUnlockLND()
 		}
 		setTimeout(async () => { // retry each 2 secs
