@@ -159,7 +159,7 @@ export async function reconnectToLND(innerCtx: number, callback?: Function) {
 		console.log(`=> [lnd] connected! ${now}`)
 		if (callback) callback()
 	} catch (e) {
-		if (e.details === 'wallet locked, unlock it to enable full RPC access') {
+		if (e.details === 'wallet locked, unlock it to enable full RPC access' || e.details === 'Stream removed') {
 			await tryToUnlockLND()
 		}
 		setTimeout(async () => { // retry each 2 secs
